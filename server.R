@@ -1,103 +1,76 @@
 
+# This is the server logic for a Shiny web application.
+# You can find out more about building applications with Shiny here:
+# 
+# http://www.rstudio.com/shiny/
+#
+
 library(shiny)
 library(plyr)
 library(reshape2)
 library(ggplot2)
+#library(googleVis)
 
+source( "./source/get.R",  local=TRUE)
 source("./source/load.R",  local=TRUE)
-source("./source/get.R",  local=TRUE)
-options(shiny.maxRequestSize=30*1024^2)
+mapping_file <- './data/tox21_id_12807_cas_structure_4v4_080813_v4.txt'
+mapping_df <- read.delim(mapping_file, stringsAsFactors=FALSE)
+
+
+
 ################
 
 shinyServer(function(input, output) {
-   
-  data_loader <- reactive({
-    inFile <- input$file1
-    if (is.null(inFile)) return (NULL)
-    result <- NULL
-    
-   
-      result <- lapply(1:nrow(inFile),
-                       function (x)
-                       {
-                         path <- inFile[[x, 'datapath']]
-                         load_input_file(path)
-                       }
-      )
-      result <- do.call("rbind", result)
-
-    
-#     path <- inFile$datapath
-#     #result <- data.frame()
-#     result <- NULL
-#     result <- load_input_file(path)
-    return(result)
-  })
-
   
   data_chemical <- reactive({
     result <- NULL
     ids <- input$cmpds
-    
-    #if (is.null(ids)) return (NULL)
-    
     result <- unlist(strsplit(ids, "\n", perl=TRUE))
     return(result)
   })
   
-  output$pathways <- renderUI({
-    result <- data_loader()
-    if (is.null(result)) return(NULL)
-    pp <- list()
-    pathway <- unique(result$pathway)
-    pp  <-   split(pathway, 1:length(pathway))
-    names(pp) <- pathway
-    selectInput("paths", "Select pathways to show:", 
-                choices  = pp, 
-                multiple = TRUE)
+  pathway_data <- reactive({
+    
+
+    chemicals <- data_chemical()
+    pathways <- input$paths
+    
+    result <- get_qhts_data_wrap(chemicals, pathways=pathways)
+    
+
+    return(result)
   })
   
-  output$options <- renderUI({
-    result <- data_loader()
-    if (is.null(result)) return(NULL)
-    pp <- list()
-    readout <- unique(result$readout)
-    pp  <-   split(readout, 1:length(readout))
-    names(pp) <- readout
+  pathway_add_data <- reactive({
     
-    selectInput("opts", "Select readout options:", 
-                choices  = pp,
-                multiple = TRUE)
-  })
-
-  output$plot_options <- renderUI({
-    selectInput("plt_opts", "Select line plotting options:", 
-                choices  = list( "raw"="raw", "curvep"="curvep",
-                                 "Hill 4-point"="hill"),
-                selected=c("raw"),
-                multiple = TRUE)
-  })
-
-  data_filter <- reactive ({
-    
-    result <- data_loader()
     chemicals <- data_chemical()
+    result <- pathway_data()
     
     options <- input$opts
-    pathways <- input$paths
+    options <- grep("^(?!run[1-3]$)", options,  perl=TRUE, value = TRUE)
+    pathways <- input$paths 
+    
+    result <- rbind(result, get_qhts_data_wrap(chemicals, pathways=pathways, options=options))
   
-    readout_pat <- paste(options, sep="", collapse="|")
-    pathway_pat <- paste(pathways, sep="", collapse="|")
+    return(result)
     
-    if (readout_pat == '' ) { result <- data.frame()  }  
-    if (pathway_pat == '')  {result <- data.frame() } 
-    #if (sum(chemicals == '') > 0 ) result <- data.frame()
-    if ( is.null(chemicals) ) { result <- data.frame() } ### not working; don't know why
+  })
+  
+  data_filter <- reactive ({
     
-    #result <- result[grep(pathway_pat, result$pathway, perl=TRUE),]
-    result <- result[grepl(pathway_pat, result$pathway, perl=TRUE) | grepl(pathway_pat, result$parent, perl=TRUE),]
-    result <- result[grep(readout_pat, result$readout, perl=TRUE),]
-    result <- get_qhts_data(chemicals, result)
+    result <- pathway_add_data()
+    options <- input$opts
+    options <- grep("run[1-3]", options,  perl=TRUE, value = TRUE)
+    options <- sub("run", '.', options)
+    pattern <- paste("\\", options, sep="", collapse="|")
+    
+    if (pattern == '')
+    {
+      result <- data.frame()
+    } else
+    {
+      result <- result[grep(pattern, result$readout, perl=TRUE),]
+    }
     
     return(result)
   })
@@ -107,49 +80,21 @@ shinyServer(function(input, output) {
     plot_options <- input$plt_opts
     show_outlier <- input$showOutlier
     if (show_outlier) plot_options <- c(plot_options, 'mask')
-    use_parent <- input$useParent
     
     qhts <- data_filter()
     
-    if (use_parent) qhts <- get_long_format(qhts)
-    
     result <- get_melt_data(qhts, resp_type=unique(c('raw', plot_options)))
-    #result$display_name <- paste(result$CAS, "|\n", result$Chemical.ID, sep="")
-    result$display_name <- paste(result$Chemical.ID, "|\n", result$Chemical.Name, sep="")
+    result$display_name <- paste(result$CAS, "|\n", result$Tox21AgencyID, sep="")
+    #result$display_name <- paste(result$Chemical.ID, "|\n", result$Chemical.Name, sep="")
     result <- result[order(result$display_name),]
     return(result)
   })
   
-#   getVarHeight <- function() {
-#     qhts <- data_filter()
-#     nrow <- length(unique(qhts$Chemical.ID))
-#     mode <- input$mode
-#     if (mode == 'overlay')
-#     {
-#       return(nrow * 150)
-#     } else if (mode == 'parallel')
-#     {
-#       return(nrow * 300)
-#     }
-#   }
-#   
-#   getVarWidth <- function() {
-#     qhts <- data_filter()
-#     mode <- input$mode
-#     ncol <- length(unique(qhts$pathway))
-#     if (mode == 'overlay')
-#     {
-#       #return("auto")
-#       return(ncol * 300)
-#     } else if (mode == 'parallel')
-#     {
-#       return(ncol * 600)
-#     }
-#   }
-  
+   
   getVarHeight <- reactive({
     qhts <- data_filter()
-    nrow <- length(unique(qhts$Chemical.ID))
+    qhts$display_name <- paste(qhts$CAS, "|\n", qhts$Tox21AgencyID, sep="")
+    nrow <- length(unique(qhts$display_name))
     mode <- input$mode
     heightpx <- input$heightpx
     if (mode == 'overlay')
@@ -175,6 +120,43 @@ shinyServer(function(input, output) {
       return(ncol * widthpx)
     }
   })
+
+  output$pathways <- renderUI({
+    selectInput("paths", "Select pathways to show:", 
+                choices  = list("ATAD5"="atad5_act_main", "p53"="p53_act_main",
+                                "DNA Damage (SRF)"="srf_inh_main", "DNA Damage (DSB)"="dsb_inh_main",
+                                "TR antagonism"="tr_inh_main",
+                                'FXR agonism'='fxr_act_main', "FXR antagonism"="fxr_inh_main" ), 
+                multiple = TRUE)
+  })
+  
+  output$options <- renderUI({
+    selectInput("opts", "Select readout options:", 
+                choices  = list( "run1"="run1","run2"="run2", "run3"="run3",
+                                 "cytotoxicity"="via", 
+                                 "ch2 (in bla)"="ch2", "ch1 (in bla)"="ch1"),
+                selected=c("run1", "run2", "run3"),
+                multiple = TRUE)
+  })
+  
+  output$plot_options <- renderUI({
+    selectInput("plt_opts", "Select line plotting options:", 
+                choices  = list( "raw"="raw", "curvep"="curvep",
+                                 "Hill 4-point"="hill"),
+                selected=c("raw"),
+                multiple = TRUE)
+  })
+  
+  
+  output$contents <- renderDataTable({
+    
+    if ( length(data_chemical()) > 0 ) 
+    {
+      get_mapping_data(data_chemical(), mapping_df)
+    }
+  })
+  
+
   
   output$plot <- renderPlot({
     mode <- input$mode
@@ -196,65 +178,51 @@ shinyServer(function(input, output) {
     #print(select_plot())
   }, height=getVarHeight, width=getVarWidth)
 
-  output$downloadPlot <- downloadHandler(
-    filename = function() { paste(as.numeric(as.POSIXct(Sys.time())), ".pdf", sep="") },
-    content = function(file) {
-      result <- data_melter()
-      mode <- input$mode
-      plot_options <- input$plt_opts
-      show_outlier <- input$showOutlier
-      if (show_outlier) plot_options <- c(plot_options, 'mask')
-      
-      #height <- getVarHeight()
-      #width <- getVarWidth()
-      #pdf(file=file, width=width/96, height=height/96)
-      
-      #pdf(file=file, paper = "USr")
-      
-      pdf(file=file)
-      
-      if (mode == 'overlay')
-      {
-        n_page <- 6
-        nn <- unique(result$display_name)
-        pages <- split(nn, ceiling(seq_along(nn)/n_page))
-        lapply(names(pages), function (x) {
-          sub <- result[result$display_name %in% pages[[x]],]
-          p <- get_plot(sub, mode=mode, plot_options=plot_options, fontsize=8, pointsize=1)
-          p <- p  + facet_wrap(~ display_name  , ncol=2, nrow=3)
-          print(p)
-        })
-        
-      } else if (mode == 'parallel')
-      {
-        n_page <- 6
-        result <- get_blank_data(result, n_page)
-        nn <- unique(result$display_name)
-        pages <- split(nn, ceiling(seq_along(nn)/n_page))
-        lapply(names(pages), function (x) {
-          sub <- result[result$display_name %in% pages[[x]],]
-          p <- get_plot(sub, mode=mode, plot_options=plot_options, fontsize=8, pointsize=1)
-          p <- p + facet_grid(display_name ~ pathway)
-          print(p)
-        })
-        
-      }
-      
-      dev.off()
-    }
-  )
 
-  output$contents <- renderDataTable({
-    result <- data_filter()
-    #result <- data_loader()
-    return(result)
+  output$qhts_data <- renderDataTable({
+    data_filter()
   })
   
-  output$temp <- renderText({
-    
-    result <- data_filter()
-    result <- unique(result$parent)
-    return(result)
-  })
+  output$downloadPlot <- downloadHandler(
+         filename = function() { paste(as.numeric(as.POSIXct(Sys.time())), ".pdf", sep="") },
+         content = function(file) {
+           result <- data_melter()
+           mode <- input$mode
+           plot_options <- input$plt_opts
+           show_outlier <- input$showOutlier
+           if (show_outlier) plot_options <- c(plot_options, 'mask')
+      
+           pdf(file)
+           
+           if (mode == 'overlay')
+           {
+             n_page <- 6
+             nn <- unique(result$display_name)
+             pages <- split(nn, ceiling(seq_along(nn)/n_page))
+             lapply(names(pages), function (x) {
+               sub <- result[result$display_name %in% pages[[x]],]
+               p <- get_plot(sub, mode=mode, plot_options=plot_options, fontsize=8, pointsize=1)
+               p <- p  + facet_wrap(~ display_name  , ncol=2, nrow=3)
+               print(p)
+             })
+             
+           } else if (mode == 'parallel')
+           {
+             n_page <- 6
+             result <- get_blank_data(result, n_page)
+             nn <- unique(result$display_name)
+             pages <- split(nn, ceiling(seq_along(nn)/n_page))
+             lapply(names(pages), function (x) {
+               sub <- result[result$display_name %in% pages[[x]],]
+               p <- get_plot(sub, mode=mode, plot_options=plot_options, fontsize=8, pointsize=1)
+               p <- p + facet_grid(display_name ~ pathway)
+               print(p)
+             })
+             
+           }
+           
+           dev.off()
+         }
+  )
   
 })

@@ -1,3 +1,4 @@
+
 ####### dependency: 
 # id: 
 get_id_type <- function (id)
@@ -19,6 +20,9 @@ get_id_type <- function (id)
   return(result)
 }
 
+####### dependency: get_id_type
+# id: 
+# cebs: 
 get_qhts_data <- function (id, cebs)
 {
   id_type <- get_id_type(id)
@@ -42,46 +46,51 @@ get_qhts_data <- function (id, cebs)
   
 }
 
-get_long_format <- function (qhts)
+####### dependency: get_qhts_data
+# id: 
+# pathways: 
+get_qhts_data_wrap <- function(chemicals, pathways, options=NULL)
 {
+  result <- data.frame()
   
-  parents <- unique(qhts$parent)
-  pathways <- unique(qhts$pathway)
   
-  result <- lapply(1:length(parents), function (x) 
+  for (name in pathways)
+  {
+    if (is.null(options))
     {
-      label <- parents[x]
-      if (label != '')
+      rda <- paste("./data/", name, ".RData", sep="")
+      if (file.exists(rda)) 
       {
-        p <- subset(qhts, parent == label)
-        paths <- strsplit(label, "|", fixed=TRUE)[[1]]
-        p_extend <- data.frame()
-        for (j in paths)
+        load(rda) # The data frame is cebs
+        result <- rbind.fill(result, get_qhts_data(chemicals, cebs))
+        rm(cebs)
+      }
+    } else
+    {
+      base <- sub("_main", "", name)
+      for (name2 in options)
+      {
+        rda <- paste("./data/", base, "_", name2, ".RData", sep="")
+        if (file.exists(rda)) 
         {
-          if (j %in% pathways )
-          {
-            pp <- p
-            pp$pathway <- j
-            p_extend <- rbind(p_extend, pp[,! colnames(pp) %in% "parent"])
-          }
+          load(rda) # The data frame is cebs
+          result <- rbind.fill(result, get_qhts_data(chemicals, cebs))
+          rm(cebs)
         }
-        p_extend
-      } else
-      {
-        p <- subset(qhts, parent == label)
-        p <- p[,! colnames(p) %in% "parent"]
       }
     }
-  )
-  
-  result <- do.call("rbind", result)
+  }
   return(result)
+  
 }
 
+
+
+###http://stackoverflow.com/questions/5177846/equivalent-of-curve-for-ggplot
+####### dependency: get_qhts_data
 get_melt_data <- function (qhts, resp_type=c('raw', 'curvep', 'hill', 'mask'))
 {
   col_names <- colnames(qhts)
-  #basic_cols <- c('CAS', 'uniqueID', 'Tox21AgencyID', 'Chemical.ID', 'Chemical.Name', 'Tox21.ID', 'Sample.ID', 'StructureID', 'readout', 'pathway')
   basic_cols <- c('CAS', 'uniqueID', 'Tox21AgencyID', 'Chemical.ID', 'Chemical.Name', 'Tox21.ID', 'Sample.ID', 'StructureID', 'readout', 'pathway')
   basic_cols <- intersect(col_names, basic_cols)
   
@@ -98,9 +107,9 @@ get_melt_data <- function (qhts, resp_type=c('raw', 'curvep', 'hill', 'mask'))
       y_cols <- grep("resp[0-9]+", col_names,  value = TRUE)
       #y_cols <- c(paste('resp', "", seq(0,14), sep=""))
       
-        temp <- qhts[, c(basic_cols, y_cols)]
-        temp <- melt(temp, id.var=basic_cols, value.name='raw', variable.name='raw_resps')
-        result$raw <- temp$raw
+      temp <- qhts[, c(basic_cols, y_cols)]
+      temp <- melt(temp, id.var=basic_cols, value.name='raw', variable.name='raw_resps')
+      result$raw <- temp$raw
       
       
       
@@ -109,9 +118,9 @@ get_melt_data <- function (qhts, resp_type=c('raw', 'curvep', 'hill', 'mask'))
       #y_cols <- c(paste('curvep_r', "", seq(0,14), sep=""))
       y_cols <- grep("curvep_r[0-9]+", col_names, value = TRUE)
       
-        temp <- qhts[, c(basic_cols, y_cols)]
-        temp <- melt(temp, id.var=basic_cols, value.name='curvep', variable.name='curvep_resps')
-        result$curvep <- temp$curvep
+      temp <- qhts[, c(basic_cols, y_cols)]
+      temp <- melt(temp, id.var=basic_cols, value.name='curvep', variable.name='curvep_resps')
+      result$curvep <- temp$curvep
       
       
       
@@ -121,26 +130,26 @@ get_melt_data <- function (qhts, resp_type=c('raw', 'curvep', 'hill', 'mask'))
       y_cols <- grep("resp[0-9]+", col_names, value = TRUE)
       
       
-        hill_resps <- lapply(1:nrow(qhts), function(x) {
-          sapply(qhts[x, x_cols], function (y)
-            if (! is.na(qhts[x,]$Hill.Coef) )
+      hill_resps <- lapply(1:nrow(qhts), function(x) {
+        sapply(qhts[x, x_cols], function (y)
+          if (! is.na(qhts[x,]$Hill.Coef) )
+          {
+            qhts[x,]$Zero.Activity + (qhts[x,]$Inf.Activity - qhts[x,]$Zero.Activity)/(1+10^((qhts[x,]$LogAC50-y)*qhts[x,]$Hill.Coef))
+          } else
+          {
+            if (! is.na(y)) 
             {
-              qhts[x,]$Zero.Activity + (qhts[x,]$Inf.Activity - qhts[x,]$Zero.Activity)/(1+10^((qhts[x,]$LogAC50-y)*qhts[x,]$Hill.Coef))
-            } else
-            {
-              if (! is.na(y)) 
-              {
-                mean(unlist(qhts[x, y_cols]), na.rm=TRUE)
-              } else NA
-            }
-          )
-        }
+              mean(unlist(qhts[x, y_cols]), na.rm=TRUE)
+            } else NA
+          }
         )
-        hill_resps <- do.call("rbind", hill_resps)
-        colnames(hill_resps) <- sub("conc", "hill", colnames(hill_resps))
-        temp <- cbind(qhts[, basic_cols], hill_resps)
-        temp <- melt(temp, id.var=basic_cols, value.name='hill', variable.name='hill_resps')
-        result$hill <- temp$hill
+      }
+      )
+      hill_resps <- do.call("rbind", hill_resps)
+      colnames(hill_resps) <- sub("conc", "hill", colnames(hill_resps))
+      temp <- cbind(qhts[, basic_cols], hill_resps)
+      temp <- melt(temp, id.var=basic_cols, value.name='hill', variable.name='hill_resps')
+      result$hill <- temp$hill
       
       
     } else if ( type == 'mask')
@@ -148,35 +157,35 @@ get_melt_data <- function (qhts, resp_type=c('raw', 'curvep', 'hill', 'mask'))
       #y_cols <- c(paste('resp', "", seq(0,14), sep=""))
       y_cols <- grep("resp[0-9]+", col_names, value = TRUE)
       
-     
-        mask_resps <- qhts[, y_cols]
-        for ( x in 1:nrow(qhts) )
+      
+      mask_resps <- qhts[, y_cols]
+      for ( x in 1:nrow(qhts) )
+      {
+        if( ! is.null (qhts[x,]$Mask.Flags) )
         {
-          if( ! is.null (qhts[x,]$Mask.Flags) )
+          if ( qhts[x,]$Mask.Flags != ""  )
           {
-            if ( qhts[x,]$Mask.Flags != ""  )
-            {
-              m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x,]$Mask.Flags, " ")))))
-              #mask_resps[x, ][! is.na(mask_resps[x, ])][which(m)] <- NA
-              mask_resps[x, ][which(m)] <- NA
-            } 
-          } else if (! is.null (qhts[x,]$curvep_mask) )
+            m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x,]$Mask.Flags, " ")))))
+            #mask_resps[x, ][! is.na(mask_resps[x, ])][which(m)] <- NA
+            mask_resps[x, ][which(m)] <- NA
+          } 
+        } else if (! is.null (qhts[x,]$curvep_mask) )
+        {
+          if (qhts[x,]$curvep_mask != "")
           {
-            if (qhts[x,]$curvep_mask != "")
-            {
-              m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x,]$curvep_mask, " ")))))
-              #mask_resps[x, ][! is.na(mask_resps[x, ])][which(m)] <- NA
-              mask_resps[x, ][which(m)] <- NA
-            }
-          } else
-          {
-            mask_resps[x, ] <- NA
+            m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x,]$curvep_mask, " ")))))
+            #mask_resps[x, ][! is.na(mask_resps[x, ])][which(m)] <- NA
+            mask_resps[x, ][which(m)] <- NA
           }
+        } else
+        {
+          mask_resps[x, ] <- NA
         }
-        colnames(mask_resps) <- sub("resp", "mask", colnames(mask_resps))
-        temp <- cbind(qhts[, basic_cols], mask_resps)
-        temp <- melt(temp, id.var=basic_cols, value.name='mask', variable.name='mask_resps')
-        result$mask <- temp$mask
+      }
+      colnames(mask_resps) <- sub("resp", "mask", colnames(mask_resps))
+      temp <- cbind(qhts[, basic_cols], mask_resps)
+      temp <- melt(temp, id.var=basic_cols, value.name='mask', variable.name='mask_resps')
+      result$mask <- temp$mask
     }
   }
   
@@ -185,7 +194,26 @@ get_melt_data <- function (qhts, resp_type=c('raw', 'curvep', 'hill', 'mask'))
 }
 
 
+
+## ggplot(temp, aes(x=x, y=raw, color=readout)) + geom_line() + facet (uniqueID ~ pathway)
+
+
+####### dependency: data_chemical(reactive, vector); get_id_type
+get_mapping_data <- function (input, mapping)
+{
+  id_type <- get_id_type(input)
+  id_type <- switch(id_type, "cas"="CAS", "tox21"="Tox21.ID", "ncgc"="Sample.ID")
+  result <- data.frame(input)
+  colnames(result) <- id_type
+  result <- join(result, mapping)
+  #result <- subset(result, select=c(CAS, Tox21.ID, Sample.ID, Chemical.Name,StructureID))
+  #result <- subset(result, select=c(CAS, Tox21.ID, Chemical.Name,StructureID))
+  return(result)
+}
+
 ###########
+
+
 get_plot <- function (qhts_melt, mode=c('parallel', 'overlay'), plot_options=plot_options, fontsize=20, pointsize=3)
 {
   if (mode == 'parallel')
@@ -214,6 +242,7 @@ get_plot <- function (qhts_melt, mode=c('parallel', 'overlay'), plot_options=plo
   }
   return(p)
 }
+
 
 ############
 get_blank_data <- function (qhts_melt, n_page)

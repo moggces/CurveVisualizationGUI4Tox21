@@ -7,23 +7,25 @@
 
 library(shiny)
 
+tabPanelAbout <- source("./source/about.R")$value
+
+############################################
+
 shinyUI(pageWithSidebar(
   
   # Application title
-  headerPanel("General Concentration-Response Data Plotting"),
+  headerPanel("Tox21 Concentration-Response Data Visualization"),
   
-  # Sidebar with a slider input for number of observations
   sidebarPanel(
     h4('Mode'),
     radioButtons("mode", "Select a pathway display mode:",
                  choices = list("parallel"="parallel", "overlay"="overlay")),
     tags$br(),
     
-    h4('Input'),
-    fileInput('file1', 'Import conc.-resp. data', multiple=TRUE),
-    
-    h4('Compound filter'),
+    h4('Compound loader'),
     tags$textarea(id="cmpds", rows=3, cols=1, ""),
+    helpText("please input either CAS, NCGC ID, or Tox21 ID"),
+
     
     tags$hr(),
     
@@ -31,8 +33,8 @@ shinyUI(pageWithSidebar(
                 "width pixel/colmum", min = 150, max = 600, value = 300, step=50),
     sliderInput("heightpx", 
                 "height pixel/colmum", min = 150, max = 600, value = 300, step=50),
-    
     tags$br(),
+    
     
     h4('Pathway'),
     wellPanel (
@@ -41,9 +43,8 @@ shinyUI(pageWithSidebar(
     
     h4('Pathway readout options'),
     wellPanel (
-      uiOutput("options"),
+      uiOutput("options")
       #checkboxInput("isOneAssay", "multiplex cytotoxicity as one assay", TRUE)
-      checkboxInput("useParent", "use parent tag", FALSE)
     ),
     
     h4('Curve plotting options'),
@@ -51,19 +52,18 @@ shinyUI(pageWithSidebar(
       uiOutput("plot_options"),
       checkboxInput("showOutlier", "cross outliers", TRUE)
     ),
+
     br(),
     downloadButton('downloadPlot', 'Save Plot')
   ),
   
   # Show a plot of the generated distribution
   mainPanel(
-    
     tabsetPanel(
-      #tabPanel("Text", textOutput('temp')),
-      tabPanel( 'Data', dataTableOutput('contents')),
-      tabPanel( "Plot", plotOutput("plot", height="auto", width="500%"))
-      
-      #tabPanelAbout()
+      tabPanel( 'Input compounds', dataTableOutput('contents')),
+      tabPanel( "Plot", plotOutput("plot", height="auto", width="500%")),
+      tabPanel("Data", dataTableOutput('qhts_data')),
+      tabPanelAbout()
     )
   )
 ))
