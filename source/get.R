@@ -81,6 +81,7 @@ get_long_format <- function (qhts)
 get_melt_data <- function (qhts, resp_type=c('raw', 'curvep', 'hill', 'mask'))
 {
   col_names <- colnames(qhts)
+  #basic_cols <- c('CAS', 'uniqueID', 'Tox21AgencyID', 'Chemical.ID', 'Chemical.Name', 'Tox21.ID', 'Sample.ID', 'StructureID', 'readout', 'pathway')
   basic_cols <- c('CAS', 'uniqueID', 'Tox21AgencyID', 'Chemical.ID', 'Chemical.Name', 'Tox21.ID', 'Sample.ID', 'StructureID', 'readout', 'pathway')
   basic_cols <- intersect(col_names, basic_cols)
   
