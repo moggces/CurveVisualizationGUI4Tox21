@@ -125,8 +125,30 @@ shinyServer(function(input, output) {
     selectInput("paths", "Select pathways to show:", 
                 choices  = list("ATAD5"="atad5_act_main", "p53"="p53_act_main",
                                 "DNA Damage (SRF)"="srf_inh_main", "DNA Damage (DSB)"="dsb_inh_main",
+                                'AhR agonism' = 'ahr_act_main',
+                                'AR agonism (p-length)'='arpartial_act_main',
+                                'AR agonism (f-length)'='arfull_act_main',
+                                'AR antagonism (p-length)'='arpartial_inh_main',
+                                'AR antagonism (f-length)'='arfull_inh_main',
+                                'ER agonism (p-length)'='erpartial_act_main',
+                                'ER agonism (f-length)'='erfull_act_main',
+                                'ER antagonism (p-length)'='erpartial_inh_main',
+                                'ER antagonism (f-length)'='erfull_inh_main',
+                                'GR agonism' = 'gr_act_main',
+                                'GR antagonism' = 'gr_inh_main',
+                                'FXR agonism'='fxr_act_main',
+                                "FXR antagonism"="fxr_inh_main",
+                                'PPARG agonism' = 'pparg_act_main',
+                                'PPARG antagonism' = 'pparg_inh_main',
+                                'PPARD agonism' = 'ppard_act_main',
+                                'PPARD antagonism' = 'ppard_inh_main',
+                                'TR agonism' = 'tr_act_main',
                                 "TR antagonism"="tr_inh_main",
-                                'FXR agonism'='fxr_act_main', "FXR antagonism"="fxr_inh_main" ), 
+                                "aromatase antagonism"="aromatase_inh_main",
+                                'mitochondrial toxicity'='mito_inh_main',
+                                'Nrf2/ARE' = 'are_act_main',
+                                'HSE'='hse_act_main'
+                                ), 
                 multiple = TRUE)
   })
   
@@ -197,6 +219,7 @@ shinyServer(function(input, output) {
            if (mode == 'overlay')
            {
              n_page <- 6
+             result <- get_blank_data(result, n_page)
              nn <- unique(result$display_name)
              pages <- split(nn, ceiling(seq_along(nn)/n_page))
              lapply(names(pages), function (x) {
