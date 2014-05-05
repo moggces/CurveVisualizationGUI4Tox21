@@ -84,7 +84,8 @@ shinyServer(function(input, output) {
     qhts <- data_filter()
     
     result <- get_melt_data(qhts, resp_type=unique(c('raw', plot_options)))
-    result$display_name <- paste(result$CAS, "|\n", result$Tox21AgencyID, sep="")
+    #result$display_name <- paste(result$CAS, "|\n", result$Tox21AgencyID, sep="")
+    result$display_name <- paste(result$CAS, "|\n", result$Chemical.Name, "|\n", result$Tox21AgencyID, sep="")
     #result$display_name <- paste(result$Chemical.ID, "|\n", result$Chemical.Name, sep="")
     result <- result[order(result$display_name),]
     return(result)
