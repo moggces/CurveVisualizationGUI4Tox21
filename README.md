@@ -1,4 +1,6 @@
-CurveVisualizationGUI
-=====================
+CurveVisualizationGUI4Tox21
+===========================
 
-A R Shiny interface to allow the user to upload the files to plot the curves
+A R Shiny interface to visualize the concentration-response data generated in Tox21 collaboration
+
+

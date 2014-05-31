@@ -6,10 +6,10 @@ get_id_type <- function (id)
   result <- 'unique'
   for (i in id)
   {
-    if (grepl("Tox21", i))
+    if (grepl("^Tox21_[0-9]{6}$", i, perl=TRUE))
     {
       result <- 'tox21'
-    } else if (grepl("NCGC",i)) 
+    } else if (grepl("^NCGC_[0-8]{8,]\\-[0-9]{2}$",i, perl=TRUE)) 
     {
       result <- 'ncgc'
     } else if (length(strsplit(i, "-")[[1]]) == 3 & ! grepl("[a-z|A-Z]", i, perl=TRUE) )
@@ -157,31 +157,46 @@ get_melt_data <- function (qhts, resp_type=c('raw', 'curvep', 'hill', 'mask'))
       #y_cols <- c(paste('resp', "", seq(0,14), sep=""))
       y_cols <- grep("resp[0-9]+", col_names, value = TRUE)
       
-      
       mask_resps <- qhts[, y_cols]
-      for ( x in 1:nrow(qhts) )
-      {
-        if( ! is.null (qhts[x,]$Mask.Flags) )
+      qhts[, 'mask'] <- qhts[, get_mask_column(qhts)]
+      
+      mask_resps <- lapply(1:nrow(qhts), function (x) {
+        if (qhts[x, 'mask'] != '')
         {
-          if ( qhts[x,]$Mask.Flags != ""  )
-          {
-            m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x,]$Mask.Flags, " ")))))
-            #mask_resps[x, ][! is.na(mask_resps[x, ])][which(m)] <- NA
-            mask_resps[x, ][which(m)] <- NA
-          } 
-        } else if (! is.null (qhts[x,]$curvep_mask) )
-        {
-          if (qhts[x,]$curvep_mask != "")
-          {
-            m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x,]$curvep_mask, " ")))))
-            #mask_resps[x, ][! is.na(mask_resps[x, ])][which(m)] <- NA
-            mask_resps[x, ][which(m)] <- NA
-          }
+          m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x, 'mask'], " ")))))
+          mask_resps[x, ][which(m)] <- NA
         } else
         {
           mask_resps[x, ] <- NA
         }
+        return(mask_resps[x, ])
       }
+      )
+      mask_resps <- as.data.frame(do.call("rbind", mask_resps))
+#       mask_resps <- qhts[, y_cols]
+#       for ( x in 1:nrow(qhts) )
+#       {
+#         if( ! is.null (qhts[x,]$Mask.Flags) )
+#         {
+#           if ( qhts[x,]$Mask.Flags != ""  )
+#           {
+#             m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x,]$Mask.Flags, " ")))))
+#             #mask_resps[x, ][! is.na(mask_resps[x, ])][which(m)] <- NA
+#             mask_resps[x, ][which(m)] <- NA
+#           } 
+#         } else if (! is.null (qhts[x,]$curvep_mask) )
+#         {
+#           if (qhts[x,]$curvep_mask != "")
+#           {
+#             m <- ! as.logical(as.numeric((unlist(strsplit(qhts[x,]$curvep_mask, " ")))))
+#             #mask_resps[x, ][! is.na(mask_resps[x, ])][which(m)] <- NA
+#             mask_resps[x, ][which(m)] <- NA
+#           }
+#         } else
+#         {
+#           mask_resps[x, ] <- NA
+#         }
+#       }
       colnames(mask_resps) <- sub("resp", "mask", colnames(mask_resps))
       temp <- cbind(qhts[, basic_cols], mask_resps)
       temp <- melt(temp, id.var=basic_cols, value.name='mask', variable.name='mask_resps')
@@ -210,9 +225,6 @@ get_mapping_data <- function (input, mapping)
   #result <- subset(result, select=c(CAS, Tox21.ID, Chemical.Name,StructureID))
   return(result)
 }
-
-###########
-
 
 get_plot <- function (qhts_melt, mode=c('parallel', 'overlay'), plot_options=plot_options, fontsize=20, pointsize=3)
 {
@@ -244,7 +256,6 @@ get_plot <- function (qhts_melt, mode=c('parallel', 'overlay'), plot_options=plo
 }
 
 
-############
 get_blank_data <- function (qhts_melt, n_page)
 {
   result <- qhts_melt
@@ -263,4 +274,64 @@ get_blank_data <- function (qhts_melt, n_page)
   }
   return(result)
   
+}
+
+get_relevant_cmpd_library <- function (qhts)
+{
+  autod <- qhts[grep("cell|medi", qhts$readout), ]
+  otherd <- qhts[grep("cell|medi", qhts$readout, invert=TRUE), ]
+  result <- data.frame()
+  
+  if (nrow(autod) > 0)
+  {
+    # the situation where only auto data are available ...
+    if (nrow(otherd) > 0)
+    {
+      result <- lapply(unique(otherd$Tox21AgencyID), function (x)
+        {
+          v <- strsplit(x, "@")[[1]]
+          id <- v[1]
+          cmpd_library <- v[2]
+          ind <- grep(id, autod$Tox21.ID, fixed=TRUE)
+          if (length(ind) > 1) ind <- sample(ind,1)
+        
+          s <- split(autod, autod$readout)
+          s <- lapply(s, function (x)
+            { 
+              ind <- grep(id, x$Tox21.ID, fixed=TRUE)
+              if (length(ind) > 1) ind <- sample(ind,1)
+              return(x[ind,])
+            }
+          )
+        
+          result <- as.data.frame(do.call("rbind", s))
+          result[, "Tox21AgencyID"] <- x
+          #result[, "Cmpd_Library"] <- cmpd_library
+          return(result)
+        }
+      )
+      
+      result <- as.data.frame(do.call("rbind.fill", result))
+    } else
+    {
+      result <- autod
+    }
+   
+  }
+  result <- rbind.fill(otherd, result)
+  return(result)
+}
+
+## different from the CurveVisualizationGUI
+get_mask_column <- function (qhts)
+{
+  result <- 'Mask.Flags'
+#   if ( nrow(qhts) == sum(qhts$mask == '') )
+#   {
+#     if (! is.null(qhts$curvep_mask))
+#     {
+#       result <- 'curvep_mask'
+#     } 
+#   }
+  return(result)
 }

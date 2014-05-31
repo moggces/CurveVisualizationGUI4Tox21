@@ -50,7 +50,7 @@ shinyServer(function(input, output) {
     options <- grep("^(?!run[1-3]$)", options,  perl=TRUE, value = TRUE)
     pathways <- input$paths 
     
-    result <- rbind(result, get_qhts_data_wrap(chemicals, pathways=pathways, options=options))
+    result <- rbind.fill(result, get_qhts_data_wrap(chemicals, pathways=pathways, options=options))
   
     return(result)
     
@@ -60,17 +60,25 @@ shinyServer(function(input, output) {
     
     result <- pathway_add_data()
     options <- input$opts
-    options <- grep("run[1-3]", options,  perl=TRUE, value = TRUE)
-    options <- sub("run", '.', options)
-    pattern <- paste("\\", options, sep="", collapse="|")
     
-    if (pattern == '')
+    pattern <- NULL
+    options1 <- grep("run[1-3]", options,  perl=TRUE, value = TRUE)
+    options2 <- grep("cell|medi", options,  perl=TRUE, value = TRUE)
+    options1 <- sub("run", '.', options1)
+    if (sum(options1 != '') > 0 ) pattern <- c(pattern, paste("\\", options1, sep="", collapse="|"))
+    if (sum(options2 != '') > 0 ) pattern <- c(pattern, paste(options2, sep="", collapse="|"))
+    
+    pattern <- paste(pattern, sep="", collapse="|")
+    
+    if (is.null(pattern) | pattern == '')
     {
       result <- data.frame()
     } else
     {
       result <- result[grep(pattern, result$readout, perl=TRUE),]
     }
+      
+    result <- get_relevant_cmpd_library(result)
     
     return(result)
   })
@@ -84,17 +92,19 @@ shinyServer(function(input, output) {
     qhts <- data_filter()
     
     result <- get_melt_data(qhts, resp_type=unique(c('raw', plot_options)))
-    #result$display_name <- paste(result$CAS, "|\n", result$Tox21AgencyID, sep="")
-    result$display_name <- paste(result$CAS, "|\n", result$Chemical.Name, "|\n", result$Tox21AgencyID, sep="")
-    #result$display_name <- paste(result$Chemical.ID, "|\n", result$Chemical.Name, sep="")
-    result <- result[order(result$display_name),]
+    if (nrow(result) > 0)
+    {
+      result[, "display_name"] <- paste(result$CAS, "|\n", result$Chemical.Name, "|\n", result$Tox21AgencyID, sep="")
+      result <- result[order(result$display_name),]
+    }
+    
     return(result)
   })
   
    
   getVarHeight <- reactive({
     qhts <- data_filter()
-    qhts$display_name <- paste(qhts$CAS, "|\n", qhts$Tox21AgencyID, sep="")
+    qhts[, "display_name"] <- paste(qhts$CAS, "|\n", qhts$Tox21AgencyID, sep="")
     nrow <- length(unique(qhts$display_name))
     mode <- input$mode
     heightpx <- input$heightpx
@@ -148,7 +158,8 @@ shinyServer(function(input, output) {
                                 "aromatase antagonism"="aromatase_inh_main",
                                 'mitochondrial toxicity'='mito_inh_main',
                                 'Nrf2/ARE' = 'are_act_main',
-                                'HSE'='hse_act_main'
+                                'HSE'='hse_act_main',
+                                'autofluorescence (Hek293)'='autofluo_hek293_main'
                                 ), 
                 multiple = TRUE)
   })
@@ -157,7 +168,10 @@ shinyServer(function(input, output) {
     selectInput("opts", "Select readout options:", 
                 choices  = list( "run1"="run1","run2"="run2", "run3"="run3",
                                  "cytotoxicity"="via", 
-                                 "ch2 (in bla)"="ch2", "ch1 (in bla)"="ch1"),
+                                 "ch2 (in bla)"="ch2", 
+                                 "ch1 (in bla)"="ch1",
+                                 "medium blue (in autofluo)"="medi_blue",
+                                 "cell blue (in autofluo)"="cell_blue"),
                 selected=c("run1", "run2", "run3"),
                 multiple = TRUE)
   })

@@ -4,6 +4,12 @@
 #mapping_file <- './data/cas_tox21id_mapping.txt'
 mapping_file <- './data/tox21_id_12807_cas_structure_4v4_080813_v4.txt'
 mapping <- load_mapping_file(mapping_file)
+
+out_name <- 'autofluo_hek293_cell_blue'
+cebs_file <- 'U:/Projects/TOX21/auto_fluro/hek293_autofluo_cell_blue_curvep_2.5sd.txt'
+cebs <- load_cebs_file(cebs_file, mapping, pathway=NULL, readout=NULL)
+save(cebs, file=paste("./data/", out_name, ".RData", sep=""))
+
 # out_name <- 'tr_inh_main'
 # cebs_file <- 'U:/Projects/TOX21/CEBS/tr_inhibition_curvep-wauc.txt'
 # cebs <- load_cebs_file(cebs_file, mapping, pathway="tr_antagonism", readout="luc")
