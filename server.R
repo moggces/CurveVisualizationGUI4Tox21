@@ -95,6 +95,7 @@ shinyServer(function(input, output) {
     if (nrow(result) > 0)
     {
       result[, "display_name"] <- paste(result$CAS, "|\n", result$Chemical.Name, "|\n", result$Tox21AgencyID, sep="")
+      #result[, "display_name"] <- paste(result$CAS, "|\n", result$Tox21AgencyID, sep="")
       result <- result[order(result$display_name),]
     }
     
