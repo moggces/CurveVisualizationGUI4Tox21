@@ -12,7 +12,7 @@ get_id_type <- function (id)
     } else if (grepl("^NCGC_[0-8]{8,]\\-[0-9]{2}$",i, perl=TRUE)) 
     {
       result <- 'ncgc'
-    } else if (length(strsplit(i, "-")[[1]]) == 3 & ! grepl("[a-z|A-Z]", i, perl=TRUE) )
+    } else if ( (length(strsplit(i, "-")[[1]]) == 3 & ! grepl("[a-z|A-Z]", i, perl=TRUE) ) | grepl('NOCAS', i) )
     {
       result <- 'cas'
     } 
