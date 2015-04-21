@@ -1,0 +1,72 @@
+---
+output: html_document
+---
+
+## A R Shiny interface to explore the Tox21 concentration-response data
+
+### Requirement
+
+* firefox or chrome browser with the link on NIEHS JOBS sever [JOBS](http://jobs.niehs.nih.gov:3838/myapps/curves/)
+
+or
+
+* download the shiny app from [CurveVisualizationGUI4Tox21](https://github.com/moggces/CurveVisualizationGUI4Tox21)
+```{r eval=FALSE }
+library(shiny)
+runApp()
+```
+
+***
+### Primary input
+
+#### Pathways
+
+Click + Control/Shift allows to select multiple pathways. For the descriptions of pathways, please see the **Assays** tab. 
+
+#### Mode
+
+  * pathway parallel
+  * pathway overlaid
+  * pathway parallel + cmpd overlaid
+
+#### Compound loader
+
+please input either CAS, NCGC ID, or Tox21 ID.
+
+
+***
+
+
+### Secondary input
+
+#### Pathway readout options
+
+  * run1/run2/run3: the result from different batches
+  * cytotoxicity: counter-screen, cell viability assay
+  * BLA-signal/background: the signal channel or the background channel in two-channel assays (e.g. beta-lactamase assay)
+  * AutoF-red/blue/green: counter-screen, the measurement type in the auto-fluorescence assay. Please use with the primary pathway option. 
+  
+#### Curve fitting options
+
+  * raw: the normalized (against positive/negative control) data provided by NCATS
+  * curvep: the Curvep results
+  * Hill 4-point: the results based on 4-point Hill model provided by NCATS
+  
+#### Resize plot image
+
+  * width
+  * height
+  
+#### Save
+
+  * save melted data: the data can be used in other software (e.g., GraphPad Prism)
+  * save plot: pdf file
+
+
+***
+
+### References
+
+contact [Jui-Hua Hsieh](mailto:juihua.hsieh@gmail.com) for more information 
+
+

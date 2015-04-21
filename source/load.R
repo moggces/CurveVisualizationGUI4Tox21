@@ -13,6 +13,13 @@ load_mapping_file <- function (mapping_file)
   return(result)
 }
 
+# a wrapper function
+load_profile <- function (profile_file)
+{
+  #return ( read.table(paste(getwd(),  profile_file, sep=""), header = TRUE, sep = "\t", quote = '"', comment.char = "") )
+  return ( read.table( profile_file, header = TRUE, sep = "\t", quote = '', check.names=FALSE, comment.char = "") )
+}
+
 ####### dependency: plyr:join, load_mapping_file
 # cebs_file: file name
 # mapping: output of load_mapping_file

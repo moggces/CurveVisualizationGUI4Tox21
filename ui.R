@@ -7,53 +7,63 @@
 
 library(shiny)
 
-tabPanelAbout <- source("./source/about.R")$value
+#tabPanelAbout <- source("./source/about.R")$value
 
 ############################################
 
 shinyUI(pageWithSidebar(
   
   # Application title
-  headerPanel("Tox21 Concentration-Response Data Visualization"),
+  headerPanel("Tox21 Curve Browser"),
   
   sidebarPanel(
-    h4('Mode'),
-    radioButtons("mode", "Select a pathway display mode:",
-                 choices = list("parallel"="parallel", "overlay"="overlay")),
-    tags$br(),
     
-    h4('Compound loader'),
-    tags$textarea(id="cmpds", rows=3, cols=1, ""),
-    helpText("please input either CAS, NCGC ID, or Tox21 ID"),
-
-    
-    tags$hr(),
-    
-    sliderInput("widthpx", 
-                "width pixel/colmum", min = 150, max = 600, value = 300, step=50),
-    sliderInput("heightpx", 
-                "height pixel/colmum", min = 150, max = 600, value = 300, step=50),
-    tags$br(),
-    
-    
-    h4('Pathway'),
+    h4('Pathways'),
     wellPanel (
       uiOutput("pathways")
     ),
     
+    
+    
+    h4('Mode'),
+    radioButtons("mode", "Select a pathway display mode:",
+                 choices = list("pathway parallel"="parallel", "pathway overlaid"="overlay", 
+                                "pathway parallel + cmpd overlaid"="mixed")),
+    tags$hr(),
+    
+    h4('Compound loader'),
+    tags$textarea(id="cmpds", rows=3, cols=1, ""),
+    helpText("please input either CAS, NCGC ID, or Tox21 ID"),
+    
+    tags$hr(),
+
     h4('Pathway readout options'),
     wellPanel (
       uiOutput("options")
       #checkboxInput("isOneAssay", "multiplex cytotoxicity as one assay", TRUE)
     ),
     
-    h4('Curve plotting options'),
+    
+    h4('Curve fitting options'),
     wellPanel (
       uiOutput("plot_options"),
       checkboxInput("showOutlier", "cross outliers", TRUE)
     ),
-
-    br(),
+    
+    tags$hr(),
+    
+    h4('Resize plot image'),
+    sliderInput("widthpx", 
+                "width pixel/colmum", min = 150, max = 1000, value = 300, step=50),
+    sliderInput("heightpx", 
+                "height pixel/colmum", min = 150, max = 1000, value = 300, step=50),
+    
+    tags$hr(),
+    
+    downloadButton('downloadRData', 'Save Melted Rdata'),
+    
+    tags$br(),
+    
     downloadButton('downloadPlot', 'Save Plot')
   ),
   
@@ -63,7 +73,8 @@ shinyUI(pageWithSidebar(
       tabPanel( 'Input compounds', dataTableOutput('contents')),
       tabPanel( "Plot", plotOutput("plot", height="auto", width="500%")),
       tabPanel("Data", dataTableOutput('qhts_data')),
-      tabPanelAbout()
+      tabPanel( 'Assays', dataTableOutput('assay_info')),
+      tabPanel('About', includeHTML("README2.html"))
     )
   )
 ))
