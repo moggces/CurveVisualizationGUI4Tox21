@@ -18,8 +18,8 @@ source("./source/load.R",  local=TRUE)
 #mapping_file <- './data/tox21_id_12807_cas_structure_4v4_080813_v4.txt'
 #mapping_df <- read.delim(mapping_file, stringsAsFactors=FALSE)
 
-# load chemical information (will include purity later)
-profile_file <- './data/tox21_compound_id_v5a.txt' #colunm name has to be GSID
+# load chemical information
+profile_file <- './data/tox21_mapping_v5a2.txt' #colunm name has to be GSID
 mapping_df <- load_profile(profile_file) # global, dataframe output
 
 # load assay related parameters
@@ -75,7 +75,7 @@ shinyServer(function(input, output) {
     
     pattern <- NULL
     options1 <- grep("run[1-3]", options,  perl=TRUE, value = TRUE)
-    options2 <- grep("cell|medi", options,  perl=TRUE, value = TRUE)
+    options2 <- grep("blue|green|red", options,  perl=TRUE, value = TRUE)
     options1 <- sub("run", '.', options1)
     if (sum(options1 != '') > 0 ) pattern <- c(pattern, paste("\\", options1, sep="", collapse="|"))
     if (sum(options2 != '') > 0 ) pattern <- c(pattern, paste(options2, sep="", collapse="|"))
@@ -106,10 +106,13 @@ shinyServer(function(input, output) {
     qhts <- data_filter()
     
     result <- get_melt_data(qhts, resp_type=unique(c('raw', plot_options)))
+    
+    # get the purity rating here
+    result <- join(result, subset(mapping_df, select=c(Tox21.ID, Purity_Rating)), by="Tox21.ID")
+    
     if (nrow(result) > 0)
     {
-      result[, "display_name"] <- paste(result$Chemical.Name,"|\n",  result$CAS, "|\n", result$Tox21AgencyID, sep="")
-      #result[, "display_name"] <- paste(result$CAS, "|\n", result$Tox21AgencyID, sep="")
+      result[, "display_name"] <- paste(result$Chemical.Name,"|\n",  result$CAS, "|\n", "Purity:", result$Purity_Rating, "|\n", result$Tox21AgencyID, sep="")
       result <- result[order(result$display_name),]
     }
     
@@ -152,43 +155,46 @@ shinyServer(function(input, output) {
   # illustrate the pathway names to display in interface
   output$pathways <- renderUI({
     selectInput("paths", "Select pathways to show:", 
-                choices  = list("activation_ATAD5"="elg1-luc-agonist_luc", "activation_p53"="p53-bla_ratio",
+                choices  = list(
+                                'activation_AP1' = 'tox21-ap1-agonist-p1_ratio',
+                                "activation_ATAD5"="tox21-elg1-luc-agonist-p1_luc", 
+                                'activation_EndoRS' = 'tox21-esre-bla-p1_ratio',
+                                "activation_H2AX"="tox21-h2ax-cho-p2_ratio",
+                                'activation_HSP'='tox21-hse-bla-p1_ratio',
+                                'inhibition_MMP'='tox21-mitotox-p1_ratio',
+                                'activation_NFkb' = 'tox21-nfkb-bla-agonist-p1_ratio',
+                                'activation_Nrf2' = 'tox21-are-bla-p1_ratio',
+                                "activation_p53"="tox21-p53-bla-p1_ratio",
                                 "activation_DNA_damage/srf"="dt40-srf_luc", "activation_DNA_damage/dsb"="dt40-dsb_luc",
-                                'agonism_AhR' = 'ahr_luc',
-                                'agonism_AR/partial'='ar-bla-agonist_ratio',
-                                'agonism_AR/full'='ar-mda-kb2-luc-agonist_luc',
-                                'antagonism_AR/partial'='ar-bla-antagonist_ratio',
-                                'antagonism_AR/full'='ar-mda-kb2-luc-antagonist_luc',
-                                'agonism_ER/partial'='er-bla-agonist_ratio',
-                                'agonism_ER/full'='er-luc-bg1-4e2-agonist_luc',
-                                'antagonism_ER/partial'='er-bla-antagonist_ratio',
-                                'antagonism_ER/full'='er-bla-antagonist_ratio',
-                                'agonism_GR' = 'gr-hela-bla-agonist_ratio',
-                                'antagonism_GR' = 'gr-hela-bla-antagonist_ratio',
-                                'agonism_FXR'='fxr-bla-agonist_ratio',
-                                "antagonism_FXR"="fxr-bla-antagonist_ratio",
-                                'agonism_PPARg' = 'pparg-bla-agonist_ratio',
-                                'antagonism_PPARg' = 'pparg-bla-antagonist_ratio',
-                                'agonism_PPARd' = 'ppard-bla-agonist_ratio',
-                                'antagonism_PPARd' = 'ppard-bla-antagonist_ratio',
-                                'agonism_TR' = 'gh3-tre-agonist_luc',
-                                "antagonism_TR"="gh3-tre-antagonist_luc",
-                                "inhibition_aromatase"="aromatase_luc",
-                                'inhibition_MMP'='mitotox_ratio',
-                                'activation_Nrf2' = 'are-bla_ratio',
-                                'activation_HSP'='hse-bla_ratio',
-                                'activation_EndoRS' = 'esre-bla_ratio',
-                                'activation_NFkb' = 'nfkb-bla-agonist_ratio',
-                                'agonism_RSP' = 'rar-agonist_luc',
-                                'agonism_RXR' = 'rxr-bla-agonist_ratio',
-                                'agonism_VDR' = 'vdr-bla-agonist_ratio',
-                                'antagonism_VDR' = 'vdr-bla-antagonist_ratio',
-                                'antagonism_RORr' = 'ror-cho-antagonist_luc',
-                                'activation_AP1' = 'ap1-agonist_ratio',
-                                'autofluor_hek293/cell'='spec-hek293_cell',
-                                'autofluor_hek293/medium'='spec-hek293_medi',
-                                'autofluor_hepg2/cell'='spec-hepg2_cell',
-                                'autofluor_hepg2/medium'='spec-hepg2_medi'
+                                "inhibition_aromatase"="tox21-aromatase-p1_luc",
+                                'agonism_AhR' = 'tox21-ahr-p1_luc',
+                                'agonism_AR/partial'='tox21-ar-bla-agonist-p1_ratio',
+                                'agonism_AR/full'='tox21-ar-mda-kb2-luc-agonist-p1_luc',
+                                'antagonism_AR/partial'='tox21-ar-bla-antagonist-p1_ratio',
+                                'antagonism_AR/full'='tox21-ar-mda-kb2-luc-antagonist-p1_luc',
+                                'agonism_ER/partial'='tox21-er-bla-agonist-p2_ratio',
+                                'agonism_ER/full'='tox21-er-luc-bg1-4e2-agonist-p2_luc',
+                                'antagonism_ER/partial'='tox21-er-bla-antagonist-p1_ratio',
+                                'antagonism_ER/full'='tox21-er-luc-bg1-4e2-antagonist-p1_luc',
+                                'agonism_GR' = 'tox21-gr-hela-bla-agonist-p1_ratio',
+                                'antagonism_GR' = 'tox21-gr-hela-bla-antagonist-p1_ratio',
+                                'agonism_FXR'='tox21-fxr-bla-agonist-p2_ratio',
+                                "antagonism_FXR"="tox21-fxr-bla-antagonist-p1_ratio",
+                                'agonism_PPARg' = 'tox21-pparg-bla-agonist-p1_ratio',
+                                'antagonism_PPARg' = 'tox21-pparg-bla-antagonist-p1_ratio',
+                                'agonism_PPARd' = 'tox21-ppard-bla-agonist-p1_ratio',
+                                'antagonism_PPARd' = 'tox21-ppard-bla-antagonist-p1_ratio',
+                                'antagonism_RORr' = 'tox21-ror-cho-antagonist-p1_luc',
+                                'agonism_RSP' = 'tox21-rar-agonist-p1_luc',
+                                'agonism_RXR' = 'tox21-rxr-bla-agonist-p1_ratio',
+                                'agonism_TR' = 'tox21-gh3-tre-agonist-p1_luc',
+                                "antagonism_TR"="tox21-gh3-tre-antagonist-p1_luc",
+                                'agonism_VDR' = 'tox21-vdr-bla-agonist-p1_ratio',
+                                'antagonism_VDR' = 'tox21-vdr-bla-antagonist-p1_ratio',
+                                'autofluor_hek293/cell'='spec-hek293_cell_main',
+                                'autofluor_hek293/medium'='spec-hek293_medi_main',
+                                'autofluor_hepg2/cell'='spec-hepg2_cell_main',
+                                'autofluor_hepg2/medium'='spec-hepg2_medi_main'
                                 ), 
                 multiple = TRUE)
   })

@@ -59,6 +59,7 @@ get_qhts_data_wrap <- function(chemicals, pathways, options=NULL)
     if (is.null(options))
     {
       rda <- paste("./data/", name, ".RData", sep="")
+      print(rda)
       if (file.exists(rda)) 
       {
         load(rda) # The data frame is cebs
@@ -71,6 +72,7 @@ get_qhts_data_wrap <- function(chemicals, pathways, options=NULL)
       for (name2 in options)
       {
         rda <- paste("./data/", base, "_", name2, ".RData", sep="")
+        print(rda)
         if (file.exists(rda)) 
         {
           load(rda) # The data frame is cebs
