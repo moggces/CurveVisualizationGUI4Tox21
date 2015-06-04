@@ -232,7 +232,7 @@ shinyServer(function(input, output) {
   
   output$assay_info <- renderDataTable({
     
-    col_n <- c('common_name','technology','cell_type','species','abbreviation')
+    col_n <- c('assay','common_name','technology','cell_type','species','abbreviation', 'PubChem AID')
     result <- assay_names[, colnames(assay_names) %in% col_n]
     return(result)
     
@@ -278,6 +278,7 @@ shinyServer(function(input, output) {
     filename = function() { paste(as.numeric(as.POSIXct(Sys.time())), ".Rdata", sep="") },
     content = function(file) {
       result <- data_melter()
+      result <- get_published_data_only(result, assay_names)
       save(result, file=file)
     })
   
@@ -285,6 +286,7 @@ shinyServer(function(input, output) {
     filename = function() { paste(as.numeric(as.POSIXct(Sys.time())), ".pdf", sep="") },
     content = function(file) {
       result <- data_melter()
+      #result <- get_published_data_only(result, assay_names)
       mode <- input$mode
       plot_options <- input$plt_opts
       show_outlier <- input$showOutlier

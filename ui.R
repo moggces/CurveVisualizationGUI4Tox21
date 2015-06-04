@@ -9,26 +9,33 @@ library(shiny)
 
 #tabPanelAbout <- source("./source/about.R")$value
 
+
 ############################################
 
-shinyUI(pageWithSidebar(
+shinyUI(
+  
+  
+  pageWithSidebar(
   
   # Application title
   headerPanel("Tox21 Curve Browser"),
   
   sidebarPanel(
     
-    h4('Pathways'),
+    tags$head(tags$meta(`http-equiv`="pragma", content="no-cache"), 
+              tags$meta(`http-equiv`="Cache-control", content="no-cache, no-store")),
+  
+    h4('Assays'),
     wellPanel (
       uiOutput("pathways")
     ),
     
-    
+
     
     h4('Mode'),
-    radioButtons("mode", "Select a pathway display mode:",
-                 choices = list("pathway parallel"="parallel", "pathway overlaid"="overlay", 
-                                "pathway parallel + cmpd overlaid"="mixed")),
+    radioButtons("mode", "Select a assay display mode:",
+                 choices = list("assay parallel"="parallel", "assay overlaid"="overlay", 
+                                "assay parallel + cmpd overlaid"="mixed")),
     tags$hr(),
     
     h4('Compound loader'),
@@ -37,7 +44,7 @@ shinyUI(pageWithSidebar(
     
     tags$hr(),
 
-    h4('Pathway readout options'),
+    h4('Assay readout options'),
     wellPanel (
       uiOutput("options")
       #checkboxInput("isOneAssay", "multiplex cytotoxicity as one assay", TRUE)

@@ -9,7 +9,7 @@ get_id_type <- function (id)
     if (grepl("^Tox21_[0-9]{6}$", i, perl=TRUE))
     {
       result <- 'tox21'
-    } else if (grepl("^NCGC_[0-8]{8,]\\-[0-9]{2}$",i, perl=TRUE)) 
+    } else if (grepl("^NCGC[0-9]{8,}\\-[0-9]{2}$",i, perl=TRUE)) 
     {
       result <- 'ncgc'
     } else if ( (length(strsplit(i, "-")[[1]]) == 3 & ! grepl("[a-z|A-Z]", i, perl=TRUE) ) | grepl('NOCAS', i) )
@@ -72,7 +72,7 @@ get_qhts_data_wrap <- function(chemicals, pathways, options=NULL)
       for (name2 in options)
       {
         rda <- paste("./data/", base, "_", name2, ".RData", sep="")
-        print(rda)
+        #print(rda)
         if (file.exists(rda)) 
         {
           load(rda) # The data frame is cebs
@@ -420,5 +420,14 @@ get_mask_column <- function (qhts)
 #       result <- 'curvep_mask'
 #     } 
 #   }
+  return(result)
+}
+
+get_published_data_only <- function (dd, assay_dd)
+{
+  assay_dd[, "pathway"] <- assay_dd$assay
+  result <- join(dd, subset(assay_dd, select=c("pathway", "PubChem AID")))
+  result <- subset(result, `PubChem AID` != "")
+  result <- subset(result, select=-`PubChem AID`)
   return(result)
 }
