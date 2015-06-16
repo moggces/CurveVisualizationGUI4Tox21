@@ -81,7 +81,7 @@ shinyUI(
       tabPanel( "Plot", plotOutput("plot", height="auto", width="500%")),
       tabPanel("Data", dataTableOutput('qhts_data')),
       tabPanel( 'Assays', dataTableOutput('assay_info')),
-      tabPanel('About', includeHTML("README2.html"))
+      tabPanel('About', includeHTML("README.html"))
     )
   )
 ))
