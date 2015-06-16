@@ -6,7 +6,7 @@ output: html_document
 
 ### Requirement
 
-* firefox or chrome browser with the link on NIEHS JOBS sever [JOBS](http://jobs.niehs.nih.gov:3838/myapps/curves/)
+* firefox or chrome browser with the link on NIEHS internal JOBS server [JOBS](http://jobs.niehs.nih.gov:3838/myapps/curves/) orRstudio public Shiny server [shinyapps.io](https://hsiehjh.shinyapps.io/tox21curvebrowser)
 
 or
 
