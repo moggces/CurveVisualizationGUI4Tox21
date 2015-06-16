@@ -37,7 +37,6 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
 
 ***
 
-
 ### Secondary input
 
 #### Assay readout options
