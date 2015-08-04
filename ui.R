@@ -59,6 +59,11 @@ shinyUI(
     
     tags$hr(),
     
+    h4('Others'),
+    checkboxInput("report_format", "use template for reporting", FALSE),
+    
+    tags$hr(),
+    
     h4('Resize plot image'),
     sliderInput("widthpx", 
                 "width pixel/colmum", min = 150, max = 1000, value = 300, step=50),

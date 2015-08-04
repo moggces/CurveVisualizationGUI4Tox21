@@ -66,6 +66,15 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </ul>
 <pre class="r"><code>library(shiny)
 runApp()</code></pre>
+</div>
+<div id="release-note" class="section level3">
+<h3>Release note</h3>
+<p>v1.1</p>
+<ul>
+<li>new: add format for reporting</li>
+<li>new: add AR/full/run2 data</li>
+<li>changed: the purity table fixed</li>
+</ul>
 <hr />
 </div>
 <div id="primary-input" class="section level3">
@@ -114,6 +123,12 @@ runApp()</code></pre>
 <li>height</li>
 </ul>
 </div>
+<div id="other" class="section level4">
+<h4>Other</h4>
+<ul>
+<li>use color template for reporting</li>
+</ul>
+</div>
 <div id="save" class="section level4">
 <h4>Save</h4>
 <ul>
@@ -144,65 +159,69 @@ runApp()</code></pre>
 <thead>
 <tr class="header">
 <th align="left">Purity Rating</th>
-<th align="left">Description</th>
+<th align="center">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left"></td>
-<td align="left">Blank means not determined: analytical analysis in progress</td>
+<td align="left">ND</td>
+<td align="center">Not determined: analytical analysis in progress</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
-<td align="left">MW confirmed, purity &gt;90%</td>
+<td align="center">MW confirmed, purity &gt;90%</td>
 </tr>
 <tr class="odd">
 <td align="left">M</td>
-<td align="left">Defined mixture, two or more components</td>
+<td align="center">Defined mixture, two or more components</td>
 </tr>
 <tr class="even">
 <td align="left">D</td>
-<td align="left">Caution, purity &lt;50%</td>
+<td align="center">Caution, purity &lt;50%</td>
 </tr>
 <tr class="odd">
 <td align="left">Fns</td>
-<td align="left">Caution, no sample detected, biological activity unreliable</td>
+<td align="center">Caution, no sample detected, biological activity unreliable</td>
 </tr>
 <tr class="even">
 <td align="left">F</td>
-<td align="left">Caution, incorrect MW, biological activiy unreliable</td>
+<td align="center">Caution, incorrect MW, biological activiy unreliable</td>
 </tr>
 <tr class="odd">
 <td align="left">Z</td>
-<td align="left">MW confirmed, no purity info</td>
+<td align="center">MW confirmed, no purity info</td>
 </tr>
 <tr class="even">
 <td align="left">Ac</td>
-<td align="left">Caution, low concentration, 5-30% of expected concentration value, &gt;90% purity</td>
+<td align="center">Caution, low concentration, 5-30% of expected concentration value, &gt;90% purity</td>
 </tr>
 <tr class="odd">
 <td align="left">Fc</td>
-<td align="left">Caution, very low concentration, &lt;5% of expected value, biological activity unreliable</td>
+<td align="center">Caution, very low concentration, &lt;5% of expected value, biological activity unreliable</td>
 </tr>
 <tr class="even">
 <td align="left">B</td>
-<td align="left">MW confirmed, purity 75-90%</td>
+<td align="center">MW confirmed, purity 75-90%</td>
 </tr>
 <tr class="odd">
 <td align="left">C</td>
-<td align="left">MW confirmed, purity 50-75%</td>
+<td align="center">MW confirmed, purity 50-75%</td>
 </tr>
 <tr class="even">
 <td align="left">I</td>
-<td align="left">Two or more isomers detected</td>
+<td align="center">Two or more isomers detected</td>
 </tr>
 <tr class="odd">
 <td align="left">Cc</td>
-<td align="left">Caution, low concentration, 5-30% of expected concentration value, 50-75% purity</td>
+<td align="center">Caution, low concentration, 5-30% of expected concentration value, 50-75% purity</td>
 </tr>
 <tr class="even">
 <td align="left">Bc</td>
-<td align="left">Caution, low concentration, 5-30% of expected concentration value, 75-90% purity</td>
+<td align="center">Caution, low concentration, 5-30% of expected concentration value, 75-90% purity</td>
+</tr>
+<tr class="odd">
+<td align="left">W</td>
+<td align="center">Sample withdrawn</td>
 </tr>
 </tbody>
 </table>

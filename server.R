@@ -10,16 +10,18 @@ library(plyr)
 library(reshape2)
 library(ggplot2)
 library(scales)
+library(grid)
 #library(googleVis)
 
 source( "./source/get.R",  local=TRUE)
 source("./source/load.R",  local=TRUE)
+source("./source/theme_complete_bw.R", local=TRUE)
 
 #mapping_file <- './data/tox21_id_12807_cas_structure_4v4_080813_v4.txt'
 #mapping_df <- read.delim(mapping_file, stringsAsFactors=FALSE)
 
 # load chemical information
-profile_file <- './data/tox21_mapping_v5a2.txt' #colunm name has to be GSID
+profile_file <- './data/tox21_mapping_v5a3.txt' #colunm name has to be GSID
 mapping_df <- load_profile(profile_file) # global, dataframe output
 
 # load assay related parameters
@@ -171,7 +173,8 @@ shinyServer(function(input, output) {
                                 'agonism_AR/partial'='tox21-ar-bla-agonist-p1_ratio',
                                 'agonism_AR/full'='tox21-ar-mda-kb2-luc-agonist-p1_luc',
                                 'antagonism_AR/partial'='tox21-ar-bla-antagonist-p1_ratio',
-                                'antagonism_AR/full'='tox21-ar-mda-kb2-luc-antagonist-p1_luc',
+                                'antagonism_AR/full/run1'='tox21-ar-mda-kb2-luc-antagonist-p1_luc',
+                                'antagonism_AR/full/run2'='tox21-ar-mda-kb2-luc-antagonist-p2_luc',
                                 'agonism_ER/partial'='tox21-er-bla-agonist-p2_ratio',
                                 'agonism_ER/full'='tox21-er-luc-bg1-4e2-agonist-p2_luc',
                                 'antagonism_ER/partial'='tox21-er-bla-antagonist-p1_ratio',
@@ -248,12 +251,15 @@ shinyServer(function(input, output) {
     show_outlier <- input$showOutlier
     if (show_outlier) plot_options <- c(plot_options, 'mask')
     
+    report_format <- input$report_format
+    
     # generate plotting parameters (for future)
     rm_raw_color <- FALSE #input$rmRawColor
     rm_raw_line <- FALSE #input$rmRawLine
     hl_pod <- FALSE #input$hlpod
     hd_error_bar <- FALSE #input$hdErrorBar
-    paras <- list(rm_raw_color=rm_raw_color, rm_raw_line=rm_raw_line,hl_pod=hl_pod, hd_error_bar=hd_error_bar )
+    
+    paras <- list(report_format=report_format, rm_raw_color=rm_raw_color, rm_raw_line=rm_raw_line,hl_pod=hl_pod, hd_error_bar=hd_error_bar )
     
     
     # melt the data
@@ -270,6 +276,7 @@ shinyServer(function(input, output) {
     {
       p <- p  + theme_bw(base_size = 20) + facet_wrap(~ pathway  , ncol=2)
     }
+    if (report_format) p <- p + theme_complete_bw(base_size = 20) + guides(colour=FALSE)
     print(p)
     #print(select_plot())
   }, height=getVarHeight, width=getVarWidth)
@@ -291,13 +298,15 @@ shinyServer(function(input, output) {
       plot_options <- input$plt_opts
       show_outlier <- input$showOutlier
       if (show_outlier) plot_options <- c(plot_options, 'mask')
+      report_format <- input$report_format
       
       # generate plotting parameters (for future)
       rm_raw_color <- FALSE #input$rmRawColor
       rm_raw_line <- FALSE #input$rmRawLine
       hl_pod <- FALSE #input$hlpod
       hd_error_bar <- FALSE #input$hdErrorBar
-      paras <- list(rm_raw_color=rm_raw_color, rm_raw_line=rm_raw_line,hl_pod=hl_pod, hd_error_bar=hd_error_bar )
+        
+      paras <- list(report_format=report_format, rm_raw_color=rm_raw_color, rm_raw_line=rm_raw_line,hl_pod=hl_pod, hd_error_bar=hd_error_bar )
       
       # pdf file is the output file
       pdf(file=file)
@@ -312,6 +321,7 @@ shinyServer(function(input, output) {
           sub <- result[result$display_name %in% pages[[x]],]
           p <- get_plot(sub, mode=mode, plot_options=plot_options, fontsize=8, pointsize=1, paras=paras)
           p <- p  + theme_bw(base_size = 8) + facet_wrap(~ display_name  , ncol=2, nrow=3) 
+          if (report_format) p <- p + theme_complete_bw(base_size = 8) + guides(colour=FALSE)
           print(p)
         })
         
@@ -325,6 +335,7 @@ shinyServer(function(input, output) {
           sub <- result[result$display_name %in% pages[[x]],]
           p <- get_plot(sub, mode=mode, plot_options=plot_options, fontsize=8, pointsize=1, paras=paras)
           p <- p + theme_bw(base_size = 8) + facet_grid(display_name ~ pathway)
+          if (report_format) p <- p + theme_complete_bw(base_size = 8) + guides(colour=FALSE)
           print(p)
         })
         
@@ -339,6 +350,7 @@ shinyServer(function(input, output) {
           sub <- result[result$pathway %in% pages[[x]],]
           p <- get_plot(sub, mode=mode, plot_options=plot_options, fontsize=8, pointsize=1, paras=paras)
           p <- p  + theme_bw(base_size = 8) + facet_wrap(~ pathway  , ncol=2)
+          if (report_format) p <- p + theme_complete_bw(base_size = 8) + guides(colour=FALSE)
           print(p)
         })
         

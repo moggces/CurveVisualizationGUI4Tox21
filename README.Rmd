@@ -18,6 +18,14 @@ library(shiny)
 runApp()
 ```
 
+### Release note
+
+v1.1
+
+* new: add format for reporting
+* new: add AR/full/run2 data
+* changed: the purity table fixed
+
 ***
 ### Primary input
 
@@ -58,6 +66,10 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
   * width
   * height
   
+#### Other
+
+  * use color template for reporting
+  
 #### Save
 
   * save melted data: the data can be used in other software (e.g., GraphPad Prism)
@@ -80,23 +92,23 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
 
   * Purity information
 
-| Purity   Rating | Description                                                                              |
-|-----------------|------------------------------------------------------------------------------------------|
-|                 | Blank means not determined: analytical analysis in progress                              |
-| A               | MW confirmed, purity >90%                                                                |
-| M               | Defined mixture, two or more components                                                  |
-| D               | Caution, purity <50%                                                                     |
-| Fns             | Caution, no sample detected, biological activity unreliable                              |
-| F               | Caution, incorrect MW, biological   activiy unreliable                                   |
-| Z               | MW confirmed, no purity info                                                             |
-| Ac              | Caution, low concentration, 5-30% of expected concentration   value, >90% purity         |
-| Fc              | Caution, very low concentration, <5% of expected value,   biological activity unreliable |
-| B               | MW confirmed, purity 75-90%                                                              |
-| C               | MW confirmed, purity 50-75%                                                              |
-| I               | Two or more isomers detected                                                             |
-| Cc              | Caution, low concentration, 5-30% of expected concentration   value, 50-75% purity       |
-| Bc              | Caution, low concentration, 5-30% of expected concentration   value, 75-90% purity       |
-
+| Purity Rating |                                        Description                                       |
+|---------------|:----------------------------------------------------------------------------------------:|
+| ND            |                      Not determined: analytical analysis in progress                     |
+| A             |                                 MW confirmed, purity >90%                                |
+| M             |                          Defined mixture, two or more components                         |
+| D             | Caution, purity <50%                                                                     |
+| Fns           | Caution, no sample detected, biological activity unreliable                              |
+| F             | Caution, incorrect MW, biological activiy unreliable                                     |
+| Z             | MW confirmed, no purity info                                                             |
+| Ac            | Caution, low concentration, 5-30% of expected concentration value,   >90% purity         |
+| Fc            | Caution, very low concentration, <5% of expected value, biological   activity unreliable |
+| B             | MW confirmed, purity 75-90%                                                              |
+| C             | MW confirmed, purity 50-75%                                                              |
+| I             | Two or more isomers detected                                                             |
+| Cc            | Caution, low concentration, 5-30% of expected concentration value, 50-75%   purity       |
+| Bc            | Caution, low concentration, 5-30% of expected concentration value, 75-90%   purity       |
+| W             | Sample withdrawn                                                                         |
 
 ***
 
