@@ -72,6 +72,28 @@ shinyUI(
     
     tags$hr(),
     
+    h4('Resize axes'),
+    
+    checkboxInput("xaxisLogical", "manually adjust x axis", FALSE),
+    
+    
+    conditionalPanel(
+      condition = "input.xaxisLogical !== false",
+      sliderInput("xaxis", 
+                  "x-axis", min = -9, max = -3, value = c(-8,-4), step=0.5)
+    ),
+    
+    checkboxInput("yaxisLogical", "manually adjust y axis", FALSE),
+    
+    conditionalPanel(
+      condition = "input.yaxisLogical !== false",
+      sliderInput("yaxis", 
+                  "y-axis", min = -500, max = 500, value = c(0,100), step=50)
+    ),
+    
+    
+    tags$hr(),
+    
     downloadButton('downloadRData', 'Save Melted Rdata'),
     
     tags$br(),

@@ -59,9 +59,10 @@ get_qhts_data_wrap <- function(chemicals, pathways, options=NULL)
     if (is.null(options))
     {
       rda <- paste("./data/", name, ".RData", sep="")
-      print(rda)
+      
       if (file.exists(rda)) 
       {
+        #print(rda)
         load(rda) # The data frame is cebs
         result <- rbind.fill(result, get_qhts_data(chemicals, cebs))
         rm(cebs)
@@ -72,9 +73,14 @@ get_qhts_data_wrap <- function(chemicals, pathways, options=NULL)
       for (name2 in options)
       {
         rda <- paste("./data/", base, "_", name2, ".RData", sep="")
-        #print(rda)
+        if (sum(grepl("(blue|red|green)", name2)) > 0)
+        {
+          rda <- paste("./data/", base,  name2, ".RData", sep="")
+        }
+        
         if (file.exists(rda)) 
         {
+          print(rda)
           load(rda) # The data frame is cebs
           result <- rbind.fill(result, get_qhts_data(chemicals, cebs))
           rm(cebs)
@@ -271,6 +277,9 @@ get_plot <- function (qhts_melt, mode=c('parallel', 'overlay', 'mixed'), plot_op
   hl_pod <- paras$hl_pod 
   hd_error_bar <- paras$hd_error_bar
   report_format <- paras$report_format
+  xaxis_range <- paras$xaxis_range
+  yaxis_range <- paras$yaxis_range
+  
   
   if (mode == 'parallel')
   {
@@ -299,8 +308,8 @@ get_plot <- function (qhts_melt, mode=c('parallel', 'overlay', 'mixed'), plot_op
   if (hl_pod & ! is.null(qhts_melt$pod) & ! is.null(qhts_melt$thr)) p <- p + geom_point(aes(x=pod, y=thr), shape=7, size=pointsize*2, color='blue')
   
   p <- p  + theme(text = element_text(size=fontsize) ) + 
-    scale_y_continuous('resp (%)')  + 
-    scale_x_continuous('uM',  labels = trans_format(function (x) x+6, math_format(10^.x))) + 
+    scale_y_continuous('resp (%)', limits=yaxis_range)  + 
+    scale_x_continuous(expression(paste(mu, "M", sep="")),  labels = trans_format(function (x) x+6, math_format(10^.x)), limits=xaxis_range) + 
     annotation_logticks(sides = "b")
   
   if (report_format)
@@ -318,7 +327,7 @@ get_plot <- function (qhts_melt, mode=c('parallel', 'overlay', 'mixed'), plot_op
     readout_name <- c(unique(qhts_melt[, 'readout_std']), unique(qhts_melt$readout_short))
     cust_colors <- rep('purple', length(readout_name))
     names(cust_colors) <- readout_name
-    cust_colors[grepl('via',names(cust_colors))] <- 'black'
+    cust_colors[grepl('via|653',names(cust_colors))] <- 'black'
     
     if (sum (plot_options %in% 'curvep') == 1 & sum (plot_options %in% 'raw') == 0 & sum (plot_options %in% 'hill') == 0 ) 
     {
