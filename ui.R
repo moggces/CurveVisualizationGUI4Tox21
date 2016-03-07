@@ -54,13 +54,13 @@ shinyUI(
     h4('Curve fitting options'),
     wellPanel (
       uiOutput("plot_options"),
-      checkboxInput("showOutlier", "cross outliers", TRUE)
+      checkboxInput("showOutlier", "cross outliers", FALSE)
     ),
     
     tags$hr(),
     
     h4('Others'),
-    checkboxInput("report_format", "use template for reporting", FALSE),
+    checkboxInput("report_format", "use template for reporting", FALSE), 
     
     tags$hr(),
     

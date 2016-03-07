@@ -80,7 +80,7 @@ get_qhts_data_wrap <- function(chemicals, pathways, options=NULL)
         
         if (file.exists(rda)) 
         {
-          print(rda)
+          #print(rda)
           load(rda) # The data frame is cebs
           result <- rbind.fill(result, get_qhts_data(chemicals, cebs))
           rm(cebs)

@@ -21,7 +21,7 @@ source("./source/theme_complete_bw.R", local=TRUE)
 #mapping_df <- read.delim(mapping_file, stringsAsFactors=FALSE)
 
 # load chemical information
-profile_file <- './data/tox21_mapping_v5a3.txt' #colunm name has to be GSID
+profile_file <- './data/tox21_mapping_v5a5.txt' #colunm name has to be GSID
 mapping_df <- load_profile(profile_file) # global, dataframe output
 
 # load assay related parameters
@@ -110,11 +110,13 @@ shinyServer(function(input, output) {
     result <- get_melt_data(qhts, resp_type=unique(c('raw', plot_options)))
     
     # get the purity rating here
-    result <- join(result, subset(mapping_df, select=c(Tox21.ID, Purity_Rating)), by="Tox21.ID")
+    result <- join(result, subset(mapping_df, select=c(Tox21.ID, Purity_Rating_T0, Purity_Rating_T4)), by="Tox21.ID")
     
     if (nrow(result) > 0)
     {
-      result[, "display_name"] <- paste(result$Chemical.Name,"\n",  result$CAS, "\n", "Purity:", result$Purity_Rating, "\n", result$Tox21AgencyID, sep="")
+      result[, "display_name"] <- paste(result$Chemical.Name,"\n",  result$CAS, "\n", 
+                                        "Purity:", paste(result$Purity_Rating_T0, result$Purity_Rating_T4, sep="|"), "\n", 
+                                        result$Tox21AgencyID, sep="")
       result <- result[order(result$display_name),]
     }
     
@@ -156,8 +158,9 @@ shinyServer(function(input, output) {
 
   # illustrate the pathway names to display in interface
   output$pathways <- renderUI({
-    selectInput("paths", "Select pathways to show:", 
+    selectizeInput("paths", "Select pathways to show:", 
                 choices  = list(
+                                stress_response = c(
                                 'activation_AP1' = 'tox21-ap1-agonist-p1_ratio',
                                 "activation_ATAD5"="tox21-elg1-luc-agonist-p1_luc", 
                                 'activation_EndoRS' = 'tox21-esre-bla-p1_ratio',
@@ -169,13 +172,16 @@ shinyServer(function(input, output) {
                                 'activation_Nrf2' = 'tox21-are-bla-p1_ratio',
                                 "activation_p53"="tox21-p53-bla-p1_ratio",
                                 "activation_DNA_damage/srf"="tox21-dt40-srf-p1_luc", "activation_DNA_damage/dsb"="tox21-dt40-dsb-p1_luc",
-                                "inhibition_aromatase"="tox21-aromatase-p1_luc",
+                                "inhibition_aromatase"="tox21-aromatase-p1_luc"),
+                                nuclear_receptor = c(
                                 'agonism_AhR' = 'tox21-ahr-p1_luc',
                                 'agonism_AR/partial'='tox21-ar-bla-agonist-p1_ratio',
                                 'agonism_AR/full'='tox21-ar-mda-kb2-luc-agonist-p1_luc',
                                 'antagonism_AR/partial'='tox21-ar-bla-antagonist-p1_ratio',
                                 'antagonism_AR/full/run1'='tox21-ar-mda-kb2-luc-antagonist-p1_luc',
                                 'antagonism_AR/full/run2'='tox21-ar-mda-kb2-luc-antagonist-p2_luc',
+                                'agonism_CAR'='tox21-car-agonist-p1_luc',
+                                'antagonism_CAR'='tox21-car-antagonist-p1_luc',
                                 'agonism_ER/partial'='tox21-er-bla-agonist-p2_ratio',
                                 'agonism_ER/full'='tox21-er-luc-bg1-4e2-agonist-p2_luc',
                                 'antagonism_ER/partial'='tox21-er-bla-antagonist-p1_ratio',
@@ -195,12 +201,13 @@ shinyServer(function(input, output) {
                                 'agonism_TR' = 'tox21-gh3-tre-agonist-p1_luc',
                                 "antagonism_TR"="tox21-gh3-tre-antagonist-p1_luc",
                                 'agonism_VDR' = 'tox21-vdr-bla-agonist-p1_ratio',
-                                'antagonism_VDR' = 'tox21-vdr-bla-antagonist-p1_ratio',
+                                'antagonism_VDR' = 'tox21-vdr-bla-antagonist-p1_ratio'),
+                                counter_screen = c(
                                 'luciferase_toxicity' = 'tox21-luc-biochem-p1_luc',
                                 'autofluor_hek293/cell'='tox21-spec-hek293-p1_cell-_main',
                                 'autofluor_hek293/medium'='tox21-spec-hek293-p1_medi-_main',
                                 'autofluor_hepg2/cell'='tox21-spec-hepg2-p1_cell-_main',
-                                'autofluor_hepg2/medium'='tox21-spec-hepg2-p1_medi-_main'
+                                'autofluor_hepg2/medium'='tox21-spec-hepg2-p1_medi-_main')
                                 #'autofluor_hek293/cell'='spec-hek293_cell_main'
                                 #'autofluor_hek293/medium'='spec-hek293_medi_main',
                                 #'autofluor_hepg2/cell'='spec-hepg2_cell_main',
@@ -298,7 +305,7 @@ shinyServer(function(input, output) {
     filename = function() { paste(as.numeric(as.POSIXct(Sys.time())), ".Rdata", sep="") },
     content = function(file) {
       result <- data_melter()
-      #result <- get_published_data_only(result, assay_names)
+      result <- get_published_data_only(result, assay_names)
       save(result, file=file)
     })
   

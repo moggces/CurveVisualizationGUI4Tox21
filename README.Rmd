@@ -7,7 +7,7 @@ output: html_document
 
 ### Requirement
 
-* firefox or chrome browser with the link on NIEHS internal JOBS server [JOBS](http://jobs.niehs.nih.gov:3838/myapps/curves/) orRstudio public Shiny server [shinyapps.io](https://hsiehjh.shinyapps.io/tox21curvebrowser)
+* firefox or chrome browser with the link on NIEHS internal JOBS server [JOBS](http://jobs.niehs.nih.gov:3838/myapps/curves/) or Sciome site [Sciome:curve_browser](http://apps.sciome.com:3838/CurveVisualization/) or Rstudio public Shiny server [shinyapps.io](https://hsiehjh.shinyapps.io/tox21curvebrowser)
 
 or
 
@@ -25,6 +25,13 @@ v1.1
 * new: add format for reporting
 * new: add AR/full/run2 data
 * changed: the purity table fixed
+
+v1.2
+
+* new: add CAR data
+* changed: the purity table updated (v5a5)
+* changed: show outliers default = FALSE (errors seen for some chemicals)
+* changed: add more pubchem id for the assay annotation file
 
 ***
 ### Primary input
@@ -69,6 +76,7 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
 #### Other
 
   * use color template for reporting
+  * cross outliers: the outliers are defined by Hill 4-point fitting results (may not work for certain data)
   
 #### Save
 
@@ -81,8 +89,11 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
 ### Tips
 
   * use the resize scroll bar if the size of the plot is not optimal
-  * For a quick plot in powerpoint, use the right click \"copy image\" and paste into powerpoint
+  * For a quick plot in powerpoint, use the right click \"copy image\" and paste into powerpoint or Paint for editing
   * For downloading results for many compounds (n > 20), click \"save plot\" or \"save melted data\" directly
+
+### Known bugs
+  * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some other IDs. 
 
 ***
 
