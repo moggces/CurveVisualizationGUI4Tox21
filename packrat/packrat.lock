@@ -1,0 +1,158 @@
+PackratFormat: 1.4
+PackratVersion: 0.4.7.1
+RVersion: 3.2.4
+Repos: CRAN=https://mirrors.nics.utk.edu/cran/
+
+Package: R6
+Source: CRAN
+Version: 2.1.2
+
+Package: RColorBrewer
+Source: CRAN
+Version: 1.1-2
+
+Package: Rcpp
+Source: CRAN
+Version: 0.12.4
+
+Package: bitops
+Source: CRAN
+Version: 1.0-6
+
+Package: caTools
+Source: CRAN
+Version: 1.17.1
+Requires: bitops
+
+Package: colorspace
+Source: CRAN
+Version: 1.2-6
+
+Package: dichromat
+Source: CRAN
+Version: 2.0-0
+
+Package: digest
+Source: CRAN
+Version: 0.6.9
+Hash: fd55d5a024f160fc001a5ece1e27782d
+
+Package: evaluate
+Source: CRAN
+Version: 0.8.3
+Requires: stringr
+Hash: af30a08e081f5ba083cc8f0545391151
+
+Package: formatR
+Source: CRAN
+Version: 1.3
+Hash: 3fa669d00fb7d3307976a5d6df325f15
+
+Package: ggplot2
+Source: CRAN
+Version: 2.1.0
+Requires: digest, gtable, plyr, reshape2, scales
+
+Package: gtable
+Source: CRAN
+Version: 0.2.0
+
+Package: highr
+Source: CRAN
+Version: 0.5.1
+Hash: 114ef5abcf58bebbf6ac083b9cacbbd8
+
+Package: htmltools
+Source: CRAN
+Version: 0.3.5
+Requires: Rcpp, digest
+
+Package: httpuv
+Source: CRAN
+Version: 1.3.3
+Requires: Rcpp
+
+Package: jsonlite
+Source: CRAN
+Version: 0.9.19
+
+Package: knitr
+Source: CRAN
+Version: 1.12.3
+Requires: digest, evaluate, formatR, highr, markdown, stringr, yaml
+Hash: d537760d13021cf23fa2446381d9e0b2
+
+Package: labeling
+Source: CRAN
+Version: 0.3
+
+Package: magrittr
+Source: CRAN
+Version: 1.5
+Hash: bdc4d48c3135e8f3b399536ddf160df4
+
+Package: markdown
+Source: CRAN
+Version: 0.7.7
+Requires: mime
+Hash: fea2343a1119d61b0cc5c0a950d103a3
+
+Package: mime
+Source: CRAN
+Version: 0.4
+Hash: b08c52dae92a0a11e64a4deea032ec33
+
+Package: munsell
+Source: CRAN
+Version: 0.4.3
+Requires: colorspace
+
+Package: packrat
+Source: CRAN
+Version: 0.4.7-1
+Hash: 16ca16d36eb18d1d16113606ecc5c400
+
+Package: plyr
+Source: CRAN
+Version: 1.8.3
+Requires: Rcpp
+
+Package: reshape2
+Source: CRAN
+Version: 1.4.1
+Requires: Rcpp, plyr, stringr
+
+Package: rmarkdown
+Source: CRAN
+Version: 0.9.5
+Requires: caTools, htmltools, knitr, yaml
+
+Package: scales
+Source: CRAN
+Version: 0.4.0
+Requires: RColorBrewer, Rcpp, dichromat, labeling, munsell, plyr
+
+Package: shiny
+Source: CRAN
+Version: 0.13.2
+Requires: R6, digest, htmltools, httpuv, jsonlite, mime, xtable
+
+Package: stringi
+Source: CRAN
+Version: 1.0-1
+Hash: cf342bc407bd5daec77ed1009d5244e1
+
+Package: stringr
+Source: CRAN
+Version: 1.0.0
+Requires: magrittr, stringi
+Hash: 2676dd5f88890910962b733b0f9540e1
+
+Package: xtable
+Source: CRAN
+Version: 1.8-2
+
+Package: yaml
+Source: CRAN
+Version: 2.1.13
+Hash: 4854ccabebc225e8a7309fb4a74980de

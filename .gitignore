@@ -1,3 +1,15 @@
+# configuration file
+config.json
+
+# keep data folder, but no data
+data/*
+!data/.gitkeep
+# Rstudio ignores
 .Rproj.user
 .Rhistory
+.Rprofile
 .RData
+# packrat ignores
+packrat/lib*/
+packrat/bundles/*
+packrat/src/
