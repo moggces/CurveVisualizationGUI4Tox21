@@ -8,11 +8,11 @@ Library dependencies are managed using the [packrat](https://rstudio.github.io/p
 
     install.packages("packrat")
 
-## Download datasets.
+## Download datasets
 
 Datasets are too large to be kept in the github repository. Download the datasets and unzip into the `/data` path:
 
-- [https://path-to-data.com/change-me](https://path-to-data.com/change-me)
+- https://path-to-data.com/change-me
 
 ## Starting the application (development)
 
