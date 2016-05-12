@@ -11,6 +11,8 @@ library(reshape2)
 library(ggplot2)
 library(scales)
 library(grid)
+library(Cairo)
+
 #library(googleVis)
 
 source( "./source/get.R",  local=TRUE)
