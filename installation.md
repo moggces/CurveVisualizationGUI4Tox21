@@ -16,7 +16,9 @@ Library dependencies are managed using the [packrat](https://rstudio.github.io/p
 
 Datasets are too large to be kept in the github repository. Download the datasets and unzip into the `/data` path:
 
-- https://path-to-data.com/change-me
+- http://arc.irss.unc.edu/dvn/faces/study/StudyPage.xhtml?globalId=hdl:1902.29/11843&studyListingIndex=0_348efe67ca754db8eb7c7c19c110
+
+The data file is named "curve_browser_bg_plate-level.zip".
 
 ## Starting the application (development)
 
