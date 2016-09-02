@@ -1,7 +1,7 @@
 
 # This is the server logic for a Shiny web application.
 # You can find out more about building applications with Shiny here:
-# 
+#
 # http://www.rstudio.com/shiny/
 #
 
@@ -35,7 +35,7 @@ assay_names <- load_profile(logit_para_file) # global, dataframe output
 ################
 
 shinyServer(function(input, output) {
-  
+
   # load chemicals
   data_chemical <- reactive({
     result <- NULL
@@ -43,49 +43,49 @@ shinyServer(function(input, output) {
     result <- unlist(strsplit(ids, "\n", perl=TRUE))
     return(result)
   })
-  
+
   # load main pathway data
   pathway_data <- reactive({
-    
+
     chemicals <- data_chemical()
     pathways <- input$paths
-    
+
     result <- get_qhts_data_wrap(chemicals, pathways=pathways)
-    
+
     return(result)
   })
-  
+
   # load ch2/ch1 .. pathway data
   pathway_add_data <- reactive({
-    
+
     chemicals <- data_chemical()
     result <- pathway_data()
-    
+
     options <- input$opts
     options <- grep("^(?!run[1-3]$)", options,  perl=TRUE, value = TRUE)
-    pathways <- input$paths 
-    
+    pathways <- input$paths
+
     result <- rbind.fill(result, get_qhts_data_wrap(chemicals, pathways=pathways, options=options))
-  
+
     return(result)
-    
+
   })
-  
+
   # filter by unwanted channels
   data_filter <- reactive ({
-    
+
     result <- pathway_add_data()
     options <- input$opts
-    
+
     pattern <- NULL
     options1 <- grep("run[1-3]", options,  perl=TRUE, value = TRUE)
     options2 <- grep("blue|green|red", options,  perl=TRUE, value = TRUE)
     options1 <- sub("run", '.', options1)
     if (sum(options1 != '') > 0 ) pattern <- c(pattern, paste("\\", options1, sep="", collapse="|"))
     if (sum(options2 != '') > 0 ) pattern <- c(pattern, paste(options2, sep="", collapse="|"))
-    
+
     pattern <- paste(pattern, sep="", collapse="|")
-    
+
     if (is.null(pattern) | pattern == '')
     {
       result <- data.frame()
@@ -93,39 +93,39 @@ shinyServer(function(input, output) {
     {
       result <- result[grep(pattern, result$readout, perl=TRUE),]
     }
-    
-    # specifically for the situation of autoflu assays that there are no Cmpd_Library  
+
+    # specifically for the situation of autoflu assays that there are no Cmpd_Library
     result <- get_relevant_cmpd_library(result)
-    
+
     return(result)
   })
-  
+
   # put the data into ggplot styple
   data_melter <- reactive ({
     mode <- input$mode
     plot_options <- input$plt_opts
     show_outlier <- input$showOutlier
     if (show_outlier) plot_options <- c(plot_options, 'mask')
-    
+
     qhts <- data_filter()
-    
+
     result <- get_melt_data(qhts, resp_type=unique(c('raw', plot_options)))
-    
+
     # get the purity rating here
     result <- join(result, subset(mapping_df, select=c(Tox21.ID, Purity_Rating_T0, Purity_Rating_T4)), by="Tox21.ID")
-    
+
     if (nrow(result) > 0)
     {
-      result[, "display_name"] <- paste(result$Chemical.Name,"\n",  result$CAS, "\n", 
-                                        "Purity:", paste(result$Purity_Rating_T0, result$Purity_Rating_T4, sep="|"), "\n", 
+      result[, "display_name"] <- paste(result$Chemical.Name,"\n",  result$CAS, "\n",
+                                        "Purity:", paste(result$Purity_Rating_T0, result$Purity_Rating_T4, sep="|"), "\n",
                                         result$Tox21AgencyID, sep="")
       result <- result[order(result$display_name),]
     }
-    
+
     return(result)
   })
-  
-   
+
+
   getVarHeight <- reactive({
     qhts <- data_filter()
     #qhts[, "display_name"] <- paste(qhts$CAS, "|\n", qhts$Tox21AgencyID, sep="")
@@ -142,7 +142,7 @@ shinyServer(function(input, output) {
       return(nrow * heightpx) # 300
     }
   })
-  
+
   getVarWidth <- reactive({
     qhts <- data_filter()
     mode <- input$mode
@@ -160,11 +160,11 @@ shinyServer(function(input, output) {
 
   # illustrate the pathway names to display in interface
   output$pathways <- renderUI({
-    selectizeInput("paths", "Select pathways to show:", 
+    selectizeInput("paths", "Select one or more pathways to show:",
                 choices  = list(
                                 stress_response = c(
                                 'activation_AP1' = 'tox21-ap1-agonist-p1_ratio',
-                                "activation_ATAD5"="tox21-elg1-luc-agonist-p1_luc", 
+                                "activation_ATAD5"="tox21-elg1-luc-agonist-p1_luc",
                                 'activation_EndoRS' = 'tox21-esre-bla-p1_ratio',
                                 "activation_H2AX"="tox21-h2ax-cho-p2_ratio",
                                 "activation_HIF1A"="tox21-hre-bla-agonist-p1_ratio",
@@ -214,15 +214,15 @@ shinyServer(function(input, output) {
                                 #'autofluor_hek293/medium'='spec-hek293_medi_main',
                                 #'autofluor_hepg2/cell'='spec-hepg2_cell_main',
                                 #'autofluor_hepg2/medium'='spec-hepg2_medi_main'
-                                ), 
+                                ),
                 multiple = TRUE)
   })
-  
+
   output$options <- renderUI({
-    selectInput("opts", "Select readout options:", 
+    selectInput("opts", "Select readout options:",
                 choices  = list( "run1"="run1","run2"="run2", "run3"="run3",
-                                 "cytotoxicity"="via", 
-                                 "BLA-signal"="ch2", 
+                                 "cytotoxicity"="via",
+                                 "BLA-signal"="ch2",
                                  "BLA-background"="ch1",
                                  "AutoF-blue"="blue-n",
                                  "AutoF-green"="green",
@@ -231,44 +231,44 @@ shinyServer(function(input, output) {
                 selected=c("run1", "run2", "run3"),
                 multiple = TRUE)
   })
-  
+
   output$plot_options <- renderUI({
-    selectInput("plt_opts", "Select line plotting options:", 
+    selectInput("plt_opts", "Select line plotting options:",
                 choices  = list( "raw"="raw", "curvep"="curvep",
                                  "Hill 4-point"="hill"),
                 selected=c("raw"),
                 multiple = TRUE)
   })
-  
-  
+
+
   output$contents <- renderDataTable({
-    
-    if ( length(data_chemical()) > 0 ) 
+
+    if ( length(data_chemical()) > 0 )
     {
       get_mapping_data(data_chemical(), mapping_df)
     }
   })
-  
+
   output$assay_info <- renderDataTable({
-    
+
     col_n <- c('assay','common_name','technology','cell_type','species','abbreviation', 'PubChem AID')
     result <- assay_names[, colnames(assay_names) %in% col_n]
     return(result)
-    
+
   })
-  
+
   output$qhts_data <- renderDataTable({
     data_filter()
   })
-  
+
   output$plot <- renderPlot({
     mode <- input$mode
     plot_options <- input$plt_opts
     show_outlier <- input$showOutlier
     if (show_outlier) plot_options <- c(plot_options, 'mask')
-    
+
     report_format <- input$report_format
-    
+
     # generate plotting parameters (for future)
     rm_raw_color <- FALSE #input$rmRawColor
     rm_raw_line <- FALSE #input$rmRawLine
@@ -278,16 +278,16 @@ shinyServer(function(input, output) {
     yaxis_range <- NULL
     if(input$xaxisLogical) xaxis_range <- input$xaxis
     if(input$yaxisLogical) yaxis_range <- input$yaxis
-    
-    paras <- list(report_format=report_format, rm_raw_color=rm_raw_color, 
+
+    paras <- list(report_format=report_format, rm_raw_color=rm_raw_color,
                   rm_raw_line=rm_raw_line,hl_pod=hl_pod, hd_error_bar=hd_error_bar,
                   xaxis_range=xaxis_range, yaxis_range=yaxis_range)
-    
-    
+
+
     # melt the data
     result <- data_melter()
     p <- get_plot(result, mode=mode, plot_options=plot_options, fontsize=20, pointsize=3, paras=paras)
-    
+
     if (mode == 'overlay')
     {
       p <- p  + theme_bw(base_size = 20) + facet_wrap(~ display_name  , ncol=2)
@@ -302,7 +302,7 @@ shinyServer(function(input, output) {
     print(p)
     #print(select_plot())
   }, height=getVarHeight, width=getVarWidth)
-  
+
   output$downloadRData <- downloadHandler(
     filename = function() { paste(as.numeric(as.POSIXct(Sys.time())), ".Rdata", sep="") },
     content = function(file) {
@@ -310,7 +310,7 @@ shinyServer(function(input, output) {
       result <- get_published_data_only(result, assay_names)
       save(result, file=file)
     })
-  
+
   output$downloadPlot <- downloadHandler(
     filename = function() { paste(as.numeric(as.POSIXct(Sys.time())), ".pdf", sep="") },
     content = function(file) {
@@ -321,7 +321,7 @@ shinyServer(function(input, output) {
       show_outlier <- input$showOutlier
       if (show_outlier) plot_options <- c(plot_options, 'mask')
       report_format <- input$report_format
-      
+
       # generate plotting parameters (for future)
       rm_raw_color <- FALSE #input$rmRawColor
       rm_raw_line <- FALSE #input$rmRawLine
@@ -331,14 +331,14 @@ shinyServer(function(input, output) {
       yaxis_range <- NULL
       if(input$xaxisLogical) xaxis_range <- input$xaxis
       if(input$yaxisLogical) yaxis_range <- input$yaxis
-      
-      paras <- list(report_format=report_format, rm_raw_color=rm_raw_color, 
+
+      paras <- list(report_format=report_format, rm_raw_color=rm_raw_color,
                     rm_raw_line=rm_raw_line,hl_pod=hl_pod, hd_error_bar=hd_error_bar,
                     xaxis_range=xaxis_range, yaxis_range=yaxis_range)
-      
+
       # pdf file is the output file
       pdf(file=file)
-      
+
       if (mode == 'overlay')
       {
         n_page <- 6
@@ -348,11 +348,11 @@ shinyServer(function(input, output) {
         lapply(names(pages), function (x) {
           sub <- result[result$display_name %in% pages[[x]],]
           p <- get_plot(sub, mode=mode, plot_options=plot_options, fontsize=8, pointsize=1, paras=paras)
-          p <- p  + theme_bw(base_size = 8) + facet_wrap(~ display_name  , ncol=2, nrow=3) 
+          p <- p  + theme_bw(base_size = 8) + facet_wrap(~ display_name  , ncol=2, nrow=3)
           if (report_format) p <- p + theme_complete_bw(base_size = 8) + guides(colour=FALSE)
           print(p)
         })
-        
+
       } else if (mode == 'parallel')
       {
         n_page <- 6
@@ -366,10 +366,10 @@ shinyServer(function(input, output) {
           if (report_format) p <- p + theme_complete_bw(base_size = 8) + guides(colour=FALSE)
           print(p)
         })
-        
+
       } else if (mode == 'mixed')
       {
-        
+
         n_page <- 6
         result <- get_blank_data(result, n_page, 'pathway')
         nn <- unique(result$pathway)
@@ -381,9 +381,9 @@ shinyServer(function(input, output) {
           if (report_format) p <- p + theme_complete_bw(base_size = 8) + guides(colour=FALSE)
           print(p)
         })
-        
+
       }
-      
+
       dev.off()
     })
 })

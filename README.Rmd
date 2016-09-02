@@ -1,44 +1,35 @@
----
-output: html_document
+# Tox21 Concentration Response Browser
 
----
+A browser designed to display concentration response from Tox21.
 
-## A R Shiny interface to explore the Tox21 concentration-response data
+A summary of activities are found in a related application, the [Tox21 curve browser](/sandbox/tox21-activity-browser/).
 
-### Requirement
+## Quick start
 
-* firefox or chrome browser with the link on NIEHS internal JOBS server [JOBS](http://jobs.niehs.nih.gov:3838/myapps/curves/) or Sciome site [Sciome:curve_browser](http://apps.sciome.com:3838/CurveVisualization/) or Rstudio public Shiny server [shinyapps.io](https://hsiehjh.shinyapps.io/tox21curvebrowser)
+1. Paste a list of CAS numbers or other chemical identifiers in the "Compound loader". For example:
 
-or
+        83-79-4
+        23541-50-6
+        77-40-7
 
-* download the shiny app from [CurveVisualizationGUI4Tox21](https://github.com/moggces/CurveVisualizationGUI4Tox21) & contact [Jui-Hua Hsieh](mailto:juihua.hsieh@gmail.com) for background data
+2. Select at least one pathway. For example, select:
 
-```{r eval=FALSE }
-library(shiny)
-runApp()
-```
+        agonism_PPARg
+        antagonism_PPARg
 
-### Release note
+### Required inputs
 
-v1.1
+#### Compound loader
 
-* new: add format for reporting
-* new: add AR/full/run2 data
-* changed: the purity table fixed
-
-v1.2
-
-* new: add CAR data
-* changed: the purity table updated (v5a5)
-* changed: show outliers default = FALSE (errors seen for some chemicals)
-* changed: add more pubchem id for the assay annotation file
-
-***
-### Primary input
+please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compounds, please see the **Input compounds** tab.
 
 #### Assays
 
-Click + Control/Shift allows to select multiple assays. For the descriptions of assays, please see the **Assays** tab. 
+Click + Control/Shift allows to select multiple assays. For the descriptions of assays, please see the **Assays** tab.
+
+***
+
+### Additional inputs
 
 #### Mode
 
@@ -46,38 +37,29 @@ Click + Control/Shift allows to select multiple assays. For the descriptions of 
   * assay overlaid
   * assay parallel + cmpd overlaid
 
-#### Compound loader
-
-please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compounds, please see the **Input compounds** tab.
-
-
-***
-
-### Secondary input
-
 #### Assay readout options
 
   * run1/run2/run3: the result from different batches
   * cytotoxicity: counter-screen, cell viability assay
   * BLA-signal/background: the signal channel or the background channel in two-channel assays (e.g. beta-lactamase assay)
-  * AutoF-red/blue/green: counter-screen, the measurement type in the auto-fluorescence assay. Please combine with the primary assay option (autofluor\_hek293 or autofluor\_hepg2). 
-  
+  * AutoF-red/blue/green: counter-screen, the measurement type in the auto-fluorescence assay. Please combine with the primary assay option (autofluor\_hek293 or autofluor\_hepg2).
+
 #### Curve fitting options
 
   * raw: the normalized (against positive/negative control) data provided by NCATS
   * curvep: the Curvep results
   * Hill 4-point: the results based on 4-point Hill model provided by NCATS
-  
+
 #### Resize plot image
 
   * width
   * height
-  
+
 #### Other
 
   * use color template for reporting
   * cross outliers: the outliers are defined by Hill 4-point fitting results (may not work for certain data)
-  
+
 #### Save
 
   * save melted data: the data can be used in other software (e.g., GraphPad Prism)
@@ -93,38 +75,96 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
   * For downloading results for many compounds (n > 20), click \"save plot\" or \"save melted data\" directly
 
 ### Known bugs
-  * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some other IDs. 
+  * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some other IDs.
 
 ***
 
 ### Appendix
 
-#### Input compounds tab
+####  Purity information
 
-  * Purity information
+<table class='table table-condensed table-striped'>
+<thead>
+<tr>
+  <th>Purity Rating</th>
+  <th align="center">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td>ND</td>
+  <td>Not determined: analytical analysis in progress</td>
+</tr>
+<tr>
+  <td>A</td>
+  <td >MW confirmed, purity &gt;90%</td>
+</tr>
+<tr>
+  <td>M</td>
+  <td>Defined mixture, two or more components</td>
+</tr>
+<tr>
+  <td>D</td>
+  <td>Caution, purity &lt;50%</td>
+</tr>
+<tr>
+  <td>Fns</td>
+  <td>Caution, no sample detected, biological activity unreliable</td>
+</tr>
+<tr>
+  <td>F</td>
+  <td>Caution, incorrect MW, biological activiy unreliable</td>
+</tr>
+<tr>
+  <td>Z</td>
+  <td>MW confirmed, no purity info</td>
+</tr>
+<tr>
+  <td>Ac</td>
+  <td>Caution, low concentration, 5-30% of expected concentration value,   &gt;90% purity</td>
+</tr>
+<tr>
+  <td>Fc</td>
+  <td>Caution, very low concentration, &lt;5% of expected value, biological   activity unreliable</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td>MW confirmed, purity 75-90%</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td>MW confirmed, purity 50-75%</td>
+</tr>
+<tr>
+  <td>I</td>
+  <td>Two or more isomers detected</td>
+</tr>
+<tr>
+  <td>Cc</td>
+  <td>Caution, low concentration, 5-30% of expected concentration value, 50-75%   purity</td>
+</tr>
+<tr>
+  <td>Bc</td>
+  <td>Caution, low concentration, 5-30% of expected concentration value, 75-90%   purity</td>
+</tr>
+<tr>
+  <td>W</td>
+  <td>Sample withdrawn</td>
+</tr>
+</tbody></table>
 
-| Purity Rating |                                        Description                                       |
-|---------------|:----------------------------------------------------------------------------------------:|
-| ND            |                      Not determined: analytical analysis in progress                     |
-| A             |                                 MW confirmed, purity >90%                                |
-| M             |                          Defined mixture, two or more components                         |
-| D             | Caution, purity <50%                                                                     |
-| Fns           | Caution, no sample detected, biological activity unreliable                              |
-| F             | Caution, incorrect MW, biological activiy unreliable                                     |
-| Z             | MW confirmed, no purity info                                                             |
-| Ac            | Caution, low concentration, 5-30% of expected concentration value,   >90% purity         |
-| Fc            | Caution, very low concentration, <5% of expected value, biological   activity unreliable |
-| B             | MW confirmed, purity 75-90%                                                              |
-| C             | MW confirmed, purity 50-75%                                                              |
-| I             | Two or more isomers detected                                                             |
-| Cc            | Caution, low concentration, 5-30% of expected concentration value, 50-75%   purity       |
-| Bc            | Caution, low concentration, 5-30% of expected concentration value, 75-90%   purity       |
-| W             | Sample withdrawn                                                                         |
-
-***
-
-### References
-
-contact [Jui-Hua Hsieh](mailto:juihua.hsieh@gmail.com) for more information 
 
 
+### Release notes
+
+*v1.1*
+
+* new: add format for reporting
+* new: add AR/full/run2 data
+* changed: the purity table fixed
+
+*v1.2*
+
+* new: add CAR data
+* changed: the purity table updated (v5a5)
+* changed: show outliers default = FALSE (errors seen for some chemicals)
+* changed: add more pubchem id for the assay annotation file
