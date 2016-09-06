@@ -1,44 +1,54 @@
----
-output: html_document
+# Tox21 Concentration Response Browser
 
----
+A browser designed to display concentration response from Tox21.
 
+<<<<<<< HEAD
 ## A R Shiny interface to explore the concentration-response data in Tox21 assays
+=======
+A summary of activities are found in a related application, the [Tox21 curve browser](/sandbox/tox21-activity-browser/).
+>>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
-### Requirement
+## Quick start
 
+<<<<<<< HEAD
 * Firefox or Chrome browser with the link on the NIEHS internal JOBS server [JOBS](http://jobs.niehs.nih.gov:3838/myapps/tox21curvebrowser/) or on the Sciome site [Sciome:curve_browser](http://apps.sciome.com:3838/CurveVisualization/) or on the Rstudio public Shiny server [shinyapps.io](https://hsiehjh.shinyapps.io/tox21curvebrowser)
+=======
+1. Paste a list of CAS numbers or other chemical identifiers in the "Compound loader". For example:
+>>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
-or
+        83-79-4
+        23541-50-6
+        77-40-7
 
+<<<<<<< HEAD
 * download the Shiny app from [CurveVisualizationGUI4Tox21](https://github.com/moggces/CurveVisualizationGUI4Tox21) & contact [Jui-Hua Hsieh](mailto:juihua.hsieh@gmail.com) for background data
+=======
+2. Select at least one pathway. For example, select:
+>>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
-```{r eval=FALSE }
-library(shiny)
-runApp()
-```
+        agonism_PPARg
+        antagonism_PPARg
 
-### Release note
+### Required inputs
 
-v1.1
+#### Compound loader
 
-* new: add format for reporting
-* new: add AR/full/run2 data
-* changed: the purity table fixed
+please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compounds, please see the **Input compounds** tab.
 
-v1.2
+#### Assays
 
+<<<<<<< HEAD
 * new: add CAR data
 * changed: the purity table updated (v5a5)
 * changed: show outliers default = FALSE (errors seen for some chemicals)
 * changed: add PubChem AIDs for the lately released assays in PubChem
+=======
+Click + Control/Shift allows to select multiple assays. For the descriptions of assays, please see the **Assays** tab.
+>>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
 ***
-### Primary input
 
-#### Assays
-
-Click + Control/Shift allows to select multiple assays. For the descriptions of assays, please see the **Assays** tab. 
+### Additional inputs
 
 #### Mode
 
@@ -46,6 +56,7 @@ Click + Control/Shift allows to select multiple assays. For the descriptions of 
   * assay overlaid
   * assay parallel + cmpd overlaid
 
+<<<<<<< HEAD
 #### Compound loader
 
 please input either CAS, or Tox21 ID (Note: different types cannot be mixed). For chemical properties of compounds, please see the **Input compounds** tab.
@@ -55,29 +66,31 @@ please input either CAS, or Tox21 ID (Note: different types cannot be mixed). Fo
 
 ### Secondary input
 
+=======
+>>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 #### Assay readout options
 
   * run1/run2/run3: the result from different batches
   * cytotoxicity: counter-screen, cell viability assay, will only display when primary assay & run information are selected
   * BLA-signal/background: the signal channel or the background channel in two-channel assays (e.g. beta-lactamase assay)
-  * AutoF-red/blue/green: counter-screen, the measurement type in the auto-fluorescence assay. Please combine with the primary assay option (autofluor\_hek293 or autofluor\_hepg2). 
-  
+  * AutoF-red/blue/green: counter-screen, the measurement type in the auto-fluorescence assay. Please combine with the primary assay option (autofluor\_hek293 or autofluor\_hepg2).
+
 #### Curve fitting options
 
   * raw: the normalized (against positive/negative control) data provided by NCATS
   * curvep: the Curvep results
   * Hill 4-point: the results based on 4-point Hill model provided by NCATS
-  
+
 #### Resize plot image
 
   * width
   * height
-  
+
 #### Other
 
   * use color template for reporting (purple for the primary assay and black for the cell viaiblity assay)
   * cross outliers: the outliers are defined by Hill 4-point fitting results (may not work for certain data)
-  
+
 #### Save
 
   * save melted data: the data can be used in other software (e.g., GraphPad Prism)
@@ -93,12 +106,17 @@ please input either CAS, or Tox21 ID (Note: different types cannot be mixed). Fo
   * For downloading results for many compounds (n > 20), click \"save plot\" or \"save melted data\" directly
 
 ### Known bugs
+<<<<<<< HEAD
   * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some more Tox21 IDs. 
+=======
+  * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some other IDs.
+>>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
 ***
 
 ### Appendix
 
+<<<<<<< HEAD
 #### Input compounds tab
 
   * Purity information (please check the QC plots in the link [NCATS Tox21 Data Browser](https://tripod.nih.gov/tox21/index))
@@ -122,9 +140,92 @@ please input either CAS, or Tox21 ID (Note: different types cannot be mixed). Fo
 | W             | Sample withdrawn                                                                         |
 
 ***
+=======
+####  Purity information
 
-### References
+<table class='table table-condensed table-striped'>
+<thead>
+<tr>
+  <th>Purity Rating</th>
+  <th align="center">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td>ND</td>
+  <td>Not determined: analytical analysis in progress</td>
+</tr>
+<tr>
+  <td>A</td>
+  <td >MW confirmed, purity &gt;90%</td>
+</tr>
+<tr>
+  <td>M</td>
+  <td>Defined mixture, two or more components</td>
+</tr>
+<tr>
+  <td>D</td>
+  <td>Caution, purity &lt;50%</td>
+</tr>
+<tr>
+  <td>Fns</td>
+  <td>Caution, no sample detected, biological activity unreliable</td>
+</tr>
+<tr>
+  <td>F</td>
+  <td>Caution, incorrect MW, biological activiy unreliable</td>
+</tr>
+<tr>
+  <td>Z</td>
+  <td>MW confirmed, no purity info</td>
+</tr>
+<tr>
+  <td>Ac</td>
+  <td>Caution, low concentration, 5-30% of expected concentration value,   &gt;90% purity</td>
+</tr>
+<tr>
+  <td>Fc</td>
+  <td>Caution, very low concentration, &lt;5% of expected value, biological   activity unreliable</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td>MW confirmed, purity 75-90%</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td>MW confirmed, purity 50-75%</td>
+</tr>
+<tr>
+  <td>I</td>
+  <td>Two or more isomers detected</td>
+</tr>
+<tr>
+  <td>Cc</td>
+  <td>Caution, low concentration, 5-30% of expected concentration value, 50-75%   purity</td>
+</tr>
+<tr>
+  <td>Bc</td>
+  <td>Caution, low concentration, 5-30% of expected concentration value, 75-90%   purity</td>
+</tr>
+<tr>
+  <td>W</td>
+  <td>Sample withdrawn</td>
+</tr>
+</tbody></table>
 
-contact [Jui-Hua Hsieh](mailto:juihua.hsieh@gmail.com) for more information 
 
 
+### Release notes
+
+*v1.1*
+>>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
+
+* new: add format for reporting
+* new: add AR/full/run2 data
+* changed: the purity table fixed
+
+*v1.2*
+
+* new: add CAR data
+* changed: the purity table updated (v5a5)
+* changed: show outliers default = FALSE (errors seen for some chemicals)
+* changed: add more pubchem id for the assay annotation file
