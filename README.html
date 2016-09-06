@@ -61,16 +61,16 @@ img {
 
 
 
-<div id="a-r-shiny-interface-to-explore-the-tox21-concentration-response-data" class="section level2">
-<h2>A R Shiny interface to explore the Tox21 concentration-response data</h2>
+<div id="a-r-shiny-interface-to-explore-the-concentration-response-data-in-tox21-assays" class="section level2">
+<h2>A R Shiny interface to explore the concentration-response data in Tox21 assays</h2>
 <div id="requirement" class="section level3">
 <h3>Requirement</h3>
 <ul>
-<li>firefox or chrome browser with the link on NIEHS internal JOBS server <a href="http://jobs.niehs.nih.gov:3838/myapps/curves/">JOBS</a> or Sciome site <a href="http://apps.sciome.com:3838/CurveVisualization/">Sciome:curve_browser</a> or Rstudio public Shiny server <a href="https://hsiehjh.shinyapps.io/tox21curvebrowser">shinyapps.io</a></li>
+<li>Firefox or Chrome browser with the link on the NIEHS internal JOBS server <a href="http://jobs.niehs.nih.gov:3838/myapps/tox21curvebrowser/">JOBS</a> or on the Sciome site <a href="http://apps.sciome.com:3838/CurveVisualization/">Sciome:curve_browser</a> or on the Rstudio public Shiny server <a href="https://hsiehjh.shinyapps.io/tox21curvebrowser">shinyapps.io</a></li>
 </ul>
 <p>or</p>
 <ul>
-<li>download the shiny app from <a href="https://github.com/moggces/CurveVisualizationGUI4Tox21">CurveVisualizationGUI4Tox21</a> &amp; contact <a href="mailto:juihua.hsieh@gmail.com">Jui-Hua Hsieh</a> for background data</li>
+<li>download the Shiny app from <a href="https://github.com/moggces/CurveVisualizationGUI4Tox21">CurveVisualizationGUI4Tox21</a> &amp; contact <a href="mailto:juihua.hsieh@gmail.com">Jui-Hua Hsieh</a> for background data</li>
 </ul>
 <pre class="r"><code>library(shiny)
 runApp()</code></pre>
@@ -88,7 +88,7 @@ runApp()</code></pre>
 <li>new: add CAR data</li>
 <li>changed: the purity table updated (v5a5)</li>
 <li>changed: show outliers default = FALSE (errors seen for some chemicals)</li>
-<li>changed: add more pubchem id for the assay annotation file</li>
+<li>changed: add PubChem AIDs for the lately released assays in PubChem</li>
 </ul>
 <hr />
 </div>
@@ -108,7 +108,7 @@ runApp()</code></pre>
 </div>
 <div id="compound-loader" class="section level4">
 <h4>Compound loader</h4>
-<p>please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compounds, please see the <strong>Input compounds</strong> tab.</p>
+<p>please input either CAS, or Tox21 ID (Note: different types cannot be mixed). For chemical properties of compounds, please see the <strong>Input compounds</strong> tab.</p>
 <hr />
 </div>
 </div>
@@ -118,7 +118,7 @@ runApp()</code></pre>
 <h4>Assay readout options</h4>
 <ul>
 <li>run1/run2/run3: the result from different batches</li>
-<li>cytotoxicity: counter-screen, cell viability assay</li>
+<li>cytotoxicity: counter-screen, cell viability assay, will only display when primary assay &amp; run information are selected</li>
 <li>BLA-signal/background: the signal channel or the background channel in two-channel assays (e.g. beta-lactamase assay)</li>
 <li>AutoF-red/blue/green: counter-screen, the measurement type in the auto-fluorescence assay. Please combine with the primary assay option (autofluor_hek293 or autofluor_hepg2).</li>
 </ul>
@@ -141,7 +141,7 @@ runApp()</code></pre>
 <div id="other" class="section level4">
 <h4>Other</h4>
 <ul>
-<li>use color template for reporting</li>
+<li>use color template for reporting (purple for the primary assay and black for the cell viaiblity assay)</li>
 <li>cross outliers: the outliers are defined by Hill 4-point fitting results (may not work for certain data)</li>
 </ul>
 </div>
@@ -166,7 +166,7 @@ runApp()</code></pre>
 <div id="known-bugs" class="section level3">
 <h3>Known bugs</h3>
 <ul>
-<li>It does not recognize Tox21_xxxxxx_01 alone. Please add some other IDs.</li>
+<li>It does not recognize Tox21_xxxxxx_01 alone. Please add some more Tox21 IDs.</li>
 </ul>
 <hr />
 </div>
@@ -175,7 +175,7 @@ runApp()</code></pre>
 <div id="input-compounds-tab" class="section level4">
 <h4>Input compounds tab</h4>
 <ul>
-<li>Purity information</li>
+<li>Purity information (please check the QC plots in the link <a href="https://tripod.nih.gov/tox21/index">NCATS Tox21 Data Browser</a>)</li>
 </ul>
 <table>
 <thead>

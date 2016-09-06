@@ -3,15 +3,15 @@ output: html_document
 
 ---
 
-## A R Shiny interface to explore the Tox21 concentration-response data
+## A R Shiny interface to explore the concentration-response data in Tox21 assays
 
 ### Requirement
 
-* firefox or chrome browser with the link on NIEHS internal JOBS server [JOBS](http://jobs.niehs.nih.gov:3838/myapps/curves/) or Sciome site [Sciome:curve_browser](http://apps.sciome.com:3838/CurveVisualization/) or Rstudio public Shiny server [shinyapps.io](https://hsiehjh.shinyapps.io/tox21curvebrowser)
+* Firefox or Chrome browser with the link on the NIEHS internal JOBS server [JOBS](http://jobs.niehs.nih.gov:3838/myapps/tox21curvebrowser/) or on the Sciome site [Sciome:curve_browser](http://apps.sciome.com:3838/CurveVisualization/) or on the Rstudio public Shiny server [shinyapps.io](https://hsiehjh.shinyapps.io/tox21curvebrowser)
 
 or
 
-* download the shiny app from [CurveVisualizationGUI4Tox21](https://github.com/moggces/CurveVisualizationGUI4Tox21) & contact [Jui-Hua Hsieh](mailto:juihua.hsieh@gmail.com) for background data
+* download the Shiny app from [CurveVisualizationGUI4Tox21](https://github.com/moggces/CurveVisualizationGUI4Tox21) & contact [Jui-Hua Hsieh](mailto:juihua.hsieh@gmail.com) for background data
 
 ```{r eval=FALSE }
 library(shiny)
@@ -31,7 +31,7 @@ v1.2
 * new: add CAR data
 * changed: the purity table updated (v5a5)
 * changed: show outliers default = FALSE (errors seen for some chemicals)
-* changed: add more pubchem id for the assay annotation file
+* changed: add PubChem AIDs for the lately released assays in PubChem
 
 ***
 ### Primary input
@@ -48,7 +48,7 @@ Click + Control/Shift allows to select multiple assays. For the descriptions of 
 
 #### Compound loader
 
-please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compounds, please see the **Input compounds** tab.
+please input either CAS, or Tox21 ID (Note: different types cannot be mixed). For chemical properties of compounds, please see the **Input compounds** tab.
 
 
 ***
@@ -58,7 +58,7 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
 #### Assay readout options
 
   * run1/run2/run3: the result from different batches
-  * cytotoxicity: counter-screen, cell viability assay
+  * cytotoxicity: counter-screen, cell viability assay, will only display when primary assay & run information are selected
   * BLA-signal/background: the signal channel or the background channel in two-channel assays (e.g. beta-lactamase assay)
   * AutoF-red/blue/green: counter-screen, the measurement type in the auto-fluorescence assay. Please combine with the primary assay option (autofluor\_hek293 or autofluor\_hepg2). 
   
@@ -75,7 +75,7 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
   
 #### Other
 
-  * use color template for reporting
+  * use color template for reporting (purple for the primary assay and black for the cell viaiblity assay)
   * cross outliers: the outliers are defined by Hill 4-point fitting results (may not work for certain data)
   
 #### Save
@@ -93,7 +93,7 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
   * For downloading results for many compounds (n > 20), click \"save plot\" or \"save melted data\" directly
 
 ### Known bugs
-  * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some other IDs. 
+  * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some more Tox21 IDs. 
 
 ***
 
@@ -101,7 +101,7 @@ please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compou
 
 #### Input compounds tab
 
-  * Purity information
+  * Purity information (please check the QC plots in the link [NCATS Tox21 Data Browser](https://tripod.nih.gov/tox21/index))
 
 | Purity Rating |                                        Description                                       |
 |---------------|:----------------------------------------------------------------------------------------:|
