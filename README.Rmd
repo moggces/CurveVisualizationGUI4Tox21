@@ -29,9 +29,9 @@ Click + Control/Shift allows to select multiple assays. For the descriptions of 
 
 ***
 
-### Additional inputs
+### Other settings
 
-#### Mode
+#### Assay display modes
 
   * assay parallel
   * assay overlaid
@@ -44,23 +44,28 @@ Click + Control/Shift allows to select multiple assays. For the descriptions of 
   * BLA-signal/background: the signal channel or the background channel in two-channel assays (e.g. beta-lactamase assay)
   * AutoF-red/blue/green: counter-screen, the measurement type in the auto-fluorescence assay. Please combine with the primary assay option (autofluor\_hek293 or autofluor\_hepg2).
 
-#### Curve fitting options
+#### Line plotting options
 
   * raw: the normalized (against positive/negative control) data provided by NCATS
   * curvep: the Curvep results
   * Hill 4-point: the results based on 4-point Hill model provided by NCATS
+    * cross outliers: the outliers are defined by Hill 4-point fitting results (may not work for certain data)
+  * use color template for reporting (purple for the primary assay and black for the cell viaiblity assay)
 
+***
+
+### Formatting and outputs
 #### Resize plot image
 
   * width
   * height
+  
+#### Resize axes
 
-#### Other
-
-  * use color template for reporting (purple for the primary assay and black for the cell viaiblity assay)
-  * cross outliers: the outliers are defined by Hill 4-point fitting results (may not work for certain data)
-
-#### Save
+  * Manually adjust x-axis (unit: log10(M))
+  * Manually adjust y-axis (unit: %)
+  
+#### Save data
 
   * save melted data: the data can be used in other software (e.g., GraphPad Prism)
   * save plot: pdf file
