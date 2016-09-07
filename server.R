@@ -160,7 +160,7 @@ shinyServer(function(input, output) {
 
   # illustrate the pathway names to display in interface
   output$pathways <- renderUI({
-    selectizeInput("paths", "Select one or more pathways to show:",
+    selectizeInput("paths", "Select one or more assays to show:",
                 choices  = list(
                                 stress_response = c(
                                 'activation_AP1' = 'tox21-ap1-agonist-p1_ratio',

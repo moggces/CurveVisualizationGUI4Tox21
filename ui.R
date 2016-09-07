@@ -21,7 +21,7 @@ shinyUI(
             wellPanel(
               h4('Compound loader'),
               tags$textarea(id="cmpds", rows=5, class='col-xs-12', ""),
-              helpText("Input either CAS, NCGC ID, or Tox21 ID"),
+              helpText("Input either CAS or Tox21 ID"),
               tags$hr(),
 
               h4('Assays'),
