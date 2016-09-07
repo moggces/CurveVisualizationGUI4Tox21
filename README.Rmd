@@ -1,50 +1,31 @@
 # Tox21 Concentration Response Browser
 
-A browser designed to display concentration response from Tox21.
+A browser designed to display concentration response data from Tox21.
 
-<<<<<<< HEAD
-## A R Shiny interface to explore the concentration-response data in Tox21 assays
-=======
-A summary of activities are found in a related application, the [Tox21 curve browser](/sandbox/tox21-activity-browser/).
->>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
+A summary of activities are found in a related application, the [Tox21 activity profiler](/sandbox/tox21-activity-browser/).
 
 ## Quick start
 
-<<<<<<< HEAD
-* Firefox or Chrome browser with the link on the NIEHS internal JOBS server [JOBS](http://jobs.niehs.nih.gov:3838/myapps/tox21curvebrowser/) or on the Sciome site [Sciome:curve_browser](http://apps.sciome.com:3838/CurveVisualization/) or on the Rstudio public Shiny server [shinyapps.io](https://hsiehjh.shinyapps.io/tox21curvebrowser)
-=======
 1. Paste a list of CAS numbers or other chemical identifiers in the "Compound loader". For example:
->>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
         83-79-4
         23541-50-6
         77-40-7
 
-<<<<<<< HEAD
-* download the Shiny app from [CurveVisualizationGUI4Tox21](https://github.com/moggces/CurveVisualizationGUI4Tox21) & contact [Jui-Hua Hsieh](mailto:juihua.hsieh@gmail.com) for background data
-=======
 2. Select at least one pathway. For example, select:
->>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
-        agonism_PPARg
-        antagonism_PPARg
+        activation_p53
+        agonism_ER/full
 
 ### Required inputs
 
 #### Compound loader
 
-please input either CAS, NCGC ID, or Tox21 ID. For chemical properties of compounds, please see the **Input compounds** tab.
+please input either CAS or Tox21 ID. For chemical properties of compounds, please see the **Input compounds** tab.
 
 #### Assays
 
-<<<<<<< HEAD
-* new: add CAR data
-* changed: the purity table updated (v5a5)
-* changed: show outliers default = FALSE (errors seen for some chemicals)
-* changed: add PubChem AIDs for the lately released assays in PubChem
-=======
 Click + Control/Shift allows to select multiple assays. For the descriptions of assays, please see the **Assays** tab.
->>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
 ***
 
@@ -56,18 +37,6 @@ Click + Control/Shift allows to select multiple assays. For the descriptions of 
   * assay overlaid
   * assay parallel + cmpd overlaid
 
-<<<<<<< HEAD
-#### Compound loader
-
-please input either CAS, or Tox21 ID (Note: different types cannot be mixed). For chemical properties of compounds, please see the **Input compounds** tab.
-
-
-***
-
-### Secondary input
-
-=======
->>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 #### Assay readout options
 
   * run1/run2/run3: the result from different batches
@@ -95,52 +64,24 @@ please input either CAS, or Tox21 ID (Note: different types cannot be mixed). Fo
 
   * save melted data: the data can be used in other software (e.g., GraphPad Prism)
   * save plot: pdf file
-  * If the data haven\'t been released to PubChem, they won\'t be able to download
+  * If the assay does not have a PubChem AID in Assays tab, the data cannot be downloaded. 
 
 ***
 
 ### Tips
 
   * use the resize scroll bar if the size of the plot is not optimal
-  * For a quick plot in powerpoint, use the right click \"copy image\" and paste into powerpoint or Paint for editing
-  * For downloading results for many compounds (n > 20), click \"save plot\" or \"save melted data\" directly
+  * For a quick plot in powerpoint, use the right click "copy image" and paste into powerpoint or Paint for editing
+  * For downloading results for many compounds (n > 20), click "save plot" or "save melted data" directly
 
 ### Known bugs
-<<<<<<< HEAD
-  * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some more Tox21 IDs. 
-=======
+
   * It does not recognize Tox21\_xxxxxx\_01 alone. Please add some other IDs.
->>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
 ***
 
 ### Appendix
 
-<<<<<<< HEAD
-#### Input compounds tab
-
-  * Purity information (please check the QC plots in the link [NCATS Tox21 Data Browser](https://tripod.nih.gov/tox21/index))
-
-| Purity Rating |                                        Description                                       |
-|---------------|:----------------------------------------------------------------------------------------:|
-| ND            |                      Not determined: analytical analysis in progress                     |
-| A             |                                 MW confirmed, purity >90%                                |
-| M             |                          Defined mixture, two or more components                         |
-| D             | Caution, purity <50%                                                                     |
-| Fns           | Caution, no sample detected, biological activity unreliable                              |
-| F             | Caution, incorrect MW, biological activiy unreliable                                     |
-| Z             | MW confirmed, no purity info                                                             |
-| Ac            | Caution, low concentration, 5-30% of expected concentration value,   >90% purity         |
-| Fc            | Caution, very low concentration, <5% of expected value, biological   activity unreliable |
-| B             | MW confirmed, purity 75-90%                                                              |
-| C             | MW confirmed, purity 50-75%                                                              |
-| I             | Two or more isomers detected                                                             |
-| Cc            | Caution, low concentration, 5-30% of expected concentration value, 50-75%   purity       |
-| Bc            | Caution, low concentration, 5-30% of expected concentration value, 75-90%   purity       |
-| W             | Sample withdrawn                                                                         |
-
-***
-=======
 ####  Purity information
 
 <table class='table table-condensed table-striped'>
@@ -217,7 +158,6 @@ please input either CAS, or Tox21 ID (Note: different types cannot be mixed). Fo
 ### Release notes
 
 *v1.1*
->>>>>>> b907f0e56a3c8b4bce7808c7b94ee34735955a48
 
 * new: add format for reporting
 * new: add AR/full/run2 data
