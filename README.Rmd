@@ -174,3 +174,12 @@ Click + Control/Shift allows to select multiple assays. For the descriptions of 
 * changed: the purity table updated (v5a5)
 * changed: show outliers default = FALSE (errors seen for some chemicals)
 * changed: add more pubchem id for the assay annotation file
+
+***
+
+### Contact
+
+For further information, contact:
+
+Jui-Hua Hsieh, Ph.D.
+[Biomolecular Screening Branch](http://www.niehs.nih.gov/research/atniehs/labs/bmsb/toxico/staff/hsieh/index.cfm)
