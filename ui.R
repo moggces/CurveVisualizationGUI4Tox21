@@ -68,7 +68,7 @@ shinyUI(
     sliderInput("widthpx", 
                 "width pixel/colmum", min = 150, max = 1000, value = 300, step=50),
     sliderInput("heightpx", 
-                "height pixel/colmum", min = 150, max = 1000, value = 300, step=50),
+                "height pixel/colmum", min = 150, max = 2000, value = 300, step=50),
     
     tags$hr(),
     

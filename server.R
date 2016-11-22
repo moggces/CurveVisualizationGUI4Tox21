@@ -137,9 +137,12 @@ shinyServer(function(input, output) {
     if (mode == 'overlay')
     {
       return(nrow * heightpx) # 350
-    } else if (mode == 'parallel'| mode == 'mixed')
+    } else if (mode == 'parallel')
     {
       return(nrow * heightpx) # 300
+    } else if (mode == 'mixed')
+    {
+      return( heightpx)
     }
   })
   
@@ -152,9 +155,12 @@ shinyServer(function(input, output) {
     {
       #return("auto")
       return(1000)
-    } else if (mode == 'parallel'| mode == 'mixed')
+    } else if (mode == 'parallel')
     {
       return(ncol * widthpx)
+    } else if (mode == 'mixed')
+    {
+      return(widthpx)
     }
   })
 
