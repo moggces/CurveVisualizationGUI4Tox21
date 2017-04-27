@@ -7,9 +7,7 @@ shinyUI(
       tags$meta(`http-equiv`="Cache-control", content="no-cache, no-store")
     ),
     tags$head(tags$script(src="extra.js")),
-    tags$head(tags$link(rel="stylesheet", type="text/css", href="headerfooter.css")),
-    tags$head(tags$link(rel="stylesheet", type="text/css", href="custom.css")),
-    includeHTML(path="./www/header.html"),
+    tags$head(tags$link(rel="stylesheet", type="text/css", href="extra.css")),
     tabsetPanel(
       tabPanel('About', tags$div(includeMarkdown("README.Rmd"), class='container')),
       tabPanel('Application',
@@ -89,9 +87,6 @@ shinyUI(
           )
         )
       )
-    ),
-    includeHTML(path="./www/footer.html")
+    )
   )
 )
-
-# aasssssssssssss
