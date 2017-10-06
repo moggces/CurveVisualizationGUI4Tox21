@@ -2,7 +2,7 @@
 
 A browser designed to display concentration response data from Tox21.
 
-A summary of activities are found in a related application, the [Tox21 activity profiler](/sandbox/tox21-activity-browser/).
+A summary of activities are found in a related application, the [Tox21 activity profiler](/tox21-activity-browser/).
 
 ## Quick start
 
@@ -59,17 +59,17 @@ Click + Control/Shift allows to select multiple assays. For the descriptions of 
 
   * width
   * height
-  
+
 #### Resize axes
 
   * Manually adjust x-axis (unit: log10(M))
   * Manually adjust y-axis (unit: %)
-  
+
 #### Save data
 
   * save melted data: the data can be used in other software (e.g., GraphPad Prism)
   * save plot: pdf file
-  * If the assay does not have a PubChem AID in Assays tab, the data cannot be downloaded. 
+  * If the assay does not have a PubChem AID in Assays tab, the data cannot be downloaded.
 
 ***
 
