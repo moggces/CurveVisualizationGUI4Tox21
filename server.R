@@ -10,6 +10,9 @@ library(plyr)
 library(reshape2)
 library(ggplot2)
 library(scales)
+library(tibble)
+library(tidyr)
+library(dplyr)
 library(grid)
 library(Cairo)
 
@@ -27,10 +30,10 @@ profile_file <- './data/tox21_mapping_v5a5.txt' #colunm name has to be GSID
 mapping_df <- load_profile(profile_file) # global, dataframe output
 
 # load assay related parameters
-logit_para_file <- './data/tox21_assay_collection.txt'
+#logit_para_file <- './data/tox21_assay_collection.txt'
+#assay_names <- load_profile(logit_para_file) # global, dataframe output
+logit_para_file <- './data/tox21_call_descriptions_v3_temp.txt' #tox21_assay_collection.txt
 assay_names <- load_profile(logit_para_file) # global, dataframe output
-
-
 
 ################
 
@@ -257,8 +260,25 @@ shinyServer(function(input, output) {
   
   output$assay_info <- renderDataTable({
     
-    col_n <- c('assay','common_name','technology','cell_type','species','abbreviation', 'PubChem AID')
-    result <- assay_names[, colnames(assay_names) %in% col_n]
+    #col_n <- c('assay','common_name','technology','cell_type','species','abbreviation', 'PubChem AID')
+    #result <- assay_names[, colnames(assay_names) %in% col_n]
+    not_want <- c('_for_FDA_A_name', '_target_type_gene_go.biological.process',	
+                  '_target_type_gene_ctd.disease', '_technology_long.description',
+                  '_technology_short.description','protocol_call_db.name_parent',
+                  'protocol_call_db.name_readout_primary','protocol_CEBS.batch',
+                  'protocol_call_db.name_readout_secondary',
+                  'protocol_db.name','protocol_time_release',
+                  'protocol_slp','protocol_description')
+    result <- assay_names[, ! colnames(assay_names) %in% not_want]
+    result <- result %>%
+      filter(protocol_call_db.name != '')  %>% #the ones with call definition
+      #filter(protocol_call_db.name %in% colnames(partial[['npod']])) %>%
+      #select(noquote(order(colnames(.)))) #reorder the columns alphabetically
+      select(protocol_call_db.name, protocol_call_db.name_display.name, 
+             starts_with("target"), starts_with("technology"), starts_with("format"),
+             starts_with("provider"), starts_with("protocol"))
+    
+    
     return(result)
     
   })
