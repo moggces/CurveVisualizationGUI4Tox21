@@ -12,4 +12,3 @@ data/*
 # packrat ignores
 packrat/lib*/
 packrat/bundles/*
-packrat/src/
