@@ -532,3 +532,28 @@ get_published_data_only <- function (dd, assay_dd)
   result <- subset(result, select=-`PubChem AID`)
   return(result)
 }
+
+get_display_assay_type <- function(call_des)
+{
+  call_des <- call_des %>% as_tibble() %>%
+    select(protocol_call_db.name, protocol_call_db.name_readout_primary, target_type_group, 
+           target_type_group_sub, target_type_effect, target_type_sub) %>%
+    filter(target_type_group != 'cytotoxicity' & target_type_group != "") %>%
+    arrange(target_type_group_sub, protocol_call_db.name) %>%
+    mutate(display_text = str_c(target_type_group_sub, target_type_effect, target_type_sub, protocol_call_db.name, sep = "--"))
+  named_list_vect <- sapply(split(call_des, call_des$target_type_group), 
+         function(x) {
+           result <- x$protocol_call_db.name_readout_primary
+           names(result) <- x$display_text
+            return(result)
+         }, simplify = FALSE, USE.NAMES = TRUE)
+  
+  named_list_vect[['counter_screen']] <- c(
+    'luciferase_toxicity' = 'tox21-luc-biochem-p1_luc',
+    'autofluor_hek293/cell'='tox21-spec-hek293-p1_cell-_main',
+    'autofluor_hek293/medium'='tox21-spec-hek293-p1_medi-_main',
+    'autofluor_hepg2/cell'='tox21-spec-hepg2-p1_cell-_main',
+    'autofluor_hepg2/medium'='tox21-spec-hepg2-p1_medi-_main')
+  return(named_list_vect)
+  
+}

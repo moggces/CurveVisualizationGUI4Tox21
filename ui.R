@@ -39,7 +39,7 @@ shinyUI(
     tags$hr(),
     
     h4('Compound loader'),
-    tags$textarea(id="cmpds", rows=3, cols=1, ""),
+    tags$textarea(id="cmpds", rows = 5, cols=20, ""),
     helpText("please input either CAS, NCGC ID, or Tox21 ID"),
     
     tags$hr(),

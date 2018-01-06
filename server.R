@@ -10,12 +10,15 @@ library(plyr)
 library(reshape2)
 library(ggplot2)
 library(scales)
-library(tibble)
-library(tidyr)
-library(dplyr)
+#library(tibble)
+#library(tidyr)
+#library(dplyr)
+library(tidyverse)
+library(stringr)
 library(grid)
 library(Cairo)
-
+library(readxl)
+options(stringsAsFactors = FALSE)
 #library(googleVis)
 
 source( "./source/get.R",  local=TRUE)
@@ -26,13 +29,16 @@ source("./source/theme_complete_bw.R", local=TRUE)
 #mapping_df <- read.delim(mapping_file, stringsAsFactors=FALSE)
 
 # load chemical information
-profile_file <- './data/tox21_mapping_v5a5.txt' #colunm name has to be GSID
-mapping_df <- load_profile(profile_file) # global, dataframe output
+#profile_file <- './data/tox21_mapping_v5a7.txt' #colunm name has to be GSID
+#mapping_df <- load_profile(profile_file) # global, dataframe output
+profile_file <- './data/tox21_mapping_v5a7.xlsx'
+mapping_df <- read_excel(profile_file)
+
 
 # load assay related parameters
 #logit_para_file <- './data/tox21_assay_collection.txt'
 #assay_names <- load_profile(logit_para_file) # global, dataframe output
-logit_para_file <- './data/tox21_call_descriptions_v3_temp.txt' #tox21_assay_collection.txt
+logit_para_file <- './data/tox21_call_descriptions_v3_temp2.txt' #tox21_assay_collection.txt
 assay_names <- load_profile(logit_para_file) # global, dataframe output
 
 ################
@@ -170,60 +176,7 @@ shinyServer(function(input, output) {
   # illustrate the pathway names to display in interface
   output$pathways <- renderUI({
     selectizeInput("paths", "Select pathways to show:", 
-                choices  = list(
-                                stress_response = c(
-                                'activation_AP1' = 'tox21-ap1-agonist-p1_ratio',
-                                "activation_ATAD5"="tox21-elg1-luc-agonist-p1_luc", 
-                                'activation_EndoRS' = 'tox21-esre-bla-p1_ratio',
-                                "activation_H2AX"="tox21-h2ax-cho-p2_ratio",
-                                "activation_HIF1A"="tox21-hre-bla-agonist-p1_ratio",
-                                'activation_HSP'='tox21-hse-bla-p1_ratio',
-                                'inhibition_MMP'='tox21-mitotox-p1_ratio',
-                                'activation_NFkb' = 'tox21-nfkb-bla-agonist-p1_ratio',
-                                'activation_Nrf2' = 'tox21-are-bla-p1_ratio',
-                                "activation_p53"="tox21-p53-bla-p1_ratio",
-                                "activation_DNA_damage/srf"="tox21-dt40-srf-p1_luc", "activation_DNA_damage/dsb"="tox21-dt40-dsb-p1_luc",
-                                "inhibition_aromatase"="tox21-aromatase-p1_luc"),
-                                nuclear_receptor = c(
-                                'agonism_AhR' = 'tox21-ahr-p1_luc',
-                                'agonism_AR/partial'='tox21-ar-bla-agonist-p1_ratio',
-                                'agonism_AR/full'='tox21-ar-mda-kb2-luc-agonist-p1_luc',
-                                'antagonism_AR/partial'='tox21-ar-bla-antagonist-p1_ratio',
-                                'antagonism_AR/full/run1'='tox21-ar-mda-kb2-luc-antagonist-p1_luc',
-                                'antagonism_AR/full/run2'='tox21-ar-mda-kb2-luc-antagonist-p2_luc',
-                                'agonism_CAR'='tox21-car-agonist-p1_luc',
-                                'antagonism_CAR'='tox21-car-antagonist-p1_luc',
-                                'agonism_ER/partial'='tox21-er-bla-agonist-p2_ratio',
-                                'agonism_ER/full'='tox21-er-luc-bg1-4e2-agonist-p2_luc',
-                                'antagonism_ER/partial'='tox21-er-bla-antagonist-p1_ratio',
-                                'antagonism_ER/full/run1'='tox21-er-luc-bg1-4e2-antagonist-p1_luc',
-                                'antagonism_ER/full/run2'='tox21-er-luc-bg1-4e2-antagonist-p2_luc',
-                                'agonism_GR' = 'tox21-gr-hela-bla-agonist-p1_ratio',
-                                'antagonism_GR' = 'tox21-gr-hela-bla-antagonist-p1_ratio',
-                                'agonism_FXR'='tox21-fxr-bla-agonist-p2_ratio',
-                                "antagonism_FXR"="tox21-fxr-bla-antagonist-p1_ratio",
-                                'agonism_PPARg' = 'tox21-pparg-bla-agonist-p1_ratio',
-                                'antagonism_PPARg' = 'tox21-pparg-bla-antagonist-p1_ratio',
-                                'agonism_PPARd' = 'tox21-ppard-bla-agonist-p1_ratio',
-                                'antagonism_PPARd' = 'tox21-ppard-bla-antagonist-p1_ratio',
-                                'antagonism_RORr' = 'tox21-ror-cho-antagonist-p1_luc',
-                                'agonism_RSP' = 'tox21-rar-agonist-p1_luc',
-                                'agonism_RXR' = 'tox21-rxr-bla-agonist-p1_ratio',
-                                'agonism_TR' = 'tox21-gh3-tre-agonist-p1_luc',
-                                "antagonism_TR"="tox21-gh3-tre-antagonist-p1_luc",
-                                'agonism_VDR' = 'tox21-vdr-bla-agonist-p1_ratio',
-                                'antagonism_VDR' = 'tox21-vdr-bla-antagonist-p1_ratio'),
-                                counter_screen = c(
-                                'luciferase_toxicity' = 'tox21-luc-biochem-p1_luc',
-                                'autofluor_hek293/cell'='tox21-spec-hek293-p1_cell-_main',
-                                'autofluor_hek293/medium'='tox21-spec-hek293-p1_medi-_main',
-                                'autofluor_hepg2/cell'='tox21-spec-hepg2-p1_cell-_main',
-                                'autofluor_hepg2/medium'='tox21-spec-hepg2-p1_medi-_main')
-                                #'autofluor_hek293/cell'='spec-hek293_cell_main'
-                                #'autofluor_hek293/medium'='spec-hek293_medi_main',
-                                #'autofluor_hepg2/cell'='spec-hepg2_cell_main',
-                                #'autofluor_hepg2/medium'='spec-hepg2_medi_main'
-                                ), 
+                choices  = get_display_assay_type(assay_names), size = 20,
                 multiple = TRUE)
   })
   
