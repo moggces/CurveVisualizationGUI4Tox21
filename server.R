@@ -286,7 +286,7 @@ shinyServer(function(input, output) {
     filename = function() { paste(as.numeric(as.POSIXct(Sys.time())), ".Rdata", sep="") },
     content = function(file) {
       result <- data_melter()
-      result <- get_published_data_only(result, assay_names)
+      #result <- get_published_data_only(result, assay_names)
       save(result, file=file)
     })
 
